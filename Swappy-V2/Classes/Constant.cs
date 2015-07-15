@@ -5,8 +5,10 @@ using System.Web;
 
 namespace Swappy_V2.Classes
 {
-    public class Constants
+    public static class Constants
     {
-        internal static string KladrId = "***REMOVED***";
+        public static string KladrId = "***REMOVED***";
+        public static string SendgridAccount = "alikhil";
+        public static string SendgridPassword = "***REMOVED***";
     }
 }
