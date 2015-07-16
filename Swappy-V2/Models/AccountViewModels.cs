@@ -83,10 +83,6 @@ namespace Swappy_V2.Models
         public string City { get; set; }
 
         [Required]
-        [Display(Name = "Имя пользователя")]
-        public string Username { get; set; }
-
-        [Required]
         [EmailAddress]
         [Display(Name = "Адрес электронной почты")]
         public string Email { get; set; }
