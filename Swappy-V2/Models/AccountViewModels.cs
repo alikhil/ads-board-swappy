@@ -75,7 +75,7 @@ namespace Swappy_V2.Models
 
         [Required]
         [Display(Name = "Номер телефона")]
-        [RegularExpression(@"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$")]
+        [RegularExpression(@"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$", ErrorMessage = "Укажите корректный номер телефона")]
         public string PhoneNumber { get; set; }
 
         [Required]
