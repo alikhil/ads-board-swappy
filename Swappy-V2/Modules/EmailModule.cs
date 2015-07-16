@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using NLog;
 using SendGrid;
 using Swappy_V2.Classes;
 using System;
@@ -34,7 +35,7 @@ namespace Swappy_V2.Modules
             }
             else
             {
-                Trace.TraceError("Failed to create Web transport.");
+                LogManager.GetCurrentClassLogger().Warn("Не удалось создать Web transport");
                 await Task.FromResult(0);
             }
         }
