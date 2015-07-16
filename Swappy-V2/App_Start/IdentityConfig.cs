@@ -11,15 +11,21 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Swappy_V2.Models;
+using Swappy_V2.Modules;
+using Swappy_V2.Classes;
 
 namespace Swappy_V2
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
-            // Подключите здесь службу электронной почты для отправки сообщения электронной почты.
-            return Task.FromResult(0);
+            await EmailModule.SendAsync(AppConstants.NoReplyMailAddress, message);
+        }
+
+        public async Task SendAsync(string from, IdentityMessage message)
+        {
+            await EmailModule.SendAsync(from, message);
         }
     }
 
