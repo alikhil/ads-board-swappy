@@ -10,5 +10,9 @@ namespace Swappy_V2.Classes
         public static string KladrId = "***REMOVED***";
         public static string SendgridAccount = "alikhil";
         public static string SendgridPassword = "***REMOVED***";
+
+        public static string NoReplyMailAddress = "noreply@swappy.ru";
+        public static string SupportMailAddress = "support@swappy.ru";
+        public static string AdminMailAddress = "admin@swappy.ru";
     }
 }
