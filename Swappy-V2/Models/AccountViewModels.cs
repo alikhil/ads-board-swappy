@@ -65,11 +65,6 @@ namespace Swappy_V2.Models
     public class RegisterViewModel
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Адрес электронной почты")]
-        public string Email { get; set; }
-
-        [Required]
         [Display(Name = "Имя")]
         [MaxLength(50, ErrorMessage = "{0} должно иметь не более 50 символов")]
         public string Name { get; set; }
