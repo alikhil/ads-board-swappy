@@ -19,3 +19,4 @@
 /// <reference path="kladr/kladr/js/core.js" />
 /// <reference path="kladr/kladr/js/kladr.js" />
 /// <reference path="kladr/kladr/js/kladr_zip.js" />
+/// <reference path="myscripts.js" />
