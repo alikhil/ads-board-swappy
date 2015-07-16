@@ -14,5 +14,10 @@ namespace Swappy_V2.Classes
         public static string NoReplyMailAddress = "noreply@swappy.ru";
         public static string SupportMailAddress = "support@swappy.ru";
         public static string AdminMailAddress = "admin@swappy.ru";
+
+        public static string NoImagePath = "/Images\\noImage.gif";
+        public static string TempImageFullPath { get; set; }
+        public static string TempImagesPath = "/images/temp";
+        public static string DealImagesPath = "/images/deals";
     }
 }
