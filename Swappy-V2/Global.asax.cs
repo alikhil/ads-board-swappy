@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using Swappy_V2.Classes;
 namespace Swappy_V2
 {
     public class MvcApplication : System.Web.HttpApplication
@@ -16,6 +16,7 @@ namespace Swappy_V2
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            AppConstants.Init();
         }
     }
 }

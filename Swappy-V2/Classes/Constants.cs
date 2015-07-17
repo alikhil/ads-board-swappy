@@ -16,8 +16,13 @@ namespace Swappy_V2.Classes
         public static string AdminMailAddress = "admin@swappy.ru";
 
         public static string NoImagePath = "/Images\\noImage.gif";
-        public static string TempImageFullPath = HttpContext.Current.Server.MapPath(TempImagesPath);
+        public static string TempImageFullPath { get; set; }
         public static string TempImagesPath = "/images/temp";
         public static string DealImagesPath = "/images/deals";
+
+        public static void Init()
+        {
+            TempImageFullPath = HttpContext.Current.Server.MapPath(TempImagesPath);
+        }
     }
 }
