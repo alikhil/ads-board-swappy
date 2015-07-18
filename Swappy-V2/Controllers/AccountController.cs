@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Swappy_V2.Models;
+using Swappy_V2.Classes;
 
 namespace Swappy_V2.Controllers
 {
@@ -149,14 +150,21 @@ namespace Swappy_V2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            bool cityIsValid = await CustomValidator.CityValid(model.City);
+
+            if (ModelState.IsValid && cityIsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Surname = model.Surname, Name = model.Name, City = model.City, PhoneNumber = model.PhoneNumber };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    DataContext db = new DataContext();
+                    var appUserModel = new AppUserModel() { City = model.City, Email = model.Email, Name = model.Name, PhoneNumber = model.PhoneNumber, Surname = model.Surname };
+                    db.Users.Add(appUserModel);
+                    await db.SaveChangesAsync();
+                    user.AppUserId = appUserModel.Id;
+                    await UserManager.UpdateAsync(user);
                     // Дополнительные сведения о том, как включить подтверждение учетной записи и сброс пароля, см. по адресу: http://go.microsoft.com/fwlink/?LinkID=320771
                     // Отправка сообщения электронной почты с этой ссылкой
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -167,7 +175,8 @@ namespace Swappy_V2.Controllers
                 }
                 AddErrors(result);
             }
-
+            if (!cityIsValid)
+                ModelState.AddModelError("City", "Указанный город не существует");
             // Появление этого сообщения означает наличие ошибки; повторное отображение формы
             return View(model);
         }
