@@ -7,79 +7,127 @@ namespace Swappy_V2.Modules
 {
     public class SearchModule
     {
-        public static int DamerauLevenshteinDistance(string source, string target)
+        public static double Fuzzyness = 0.7;
+        public static SearchRequest FindOut(string request, IEnumerable<Searchable> ar)
         {
-            if (String.IsNullOrEmpty(source))
+            SearchRequest req = new SearchRequest { Request = request };
+            int cnt = 0;
+            foreach (var src in ar)
             {
-                if (String.IsNullOrEmpty(target))
-                {
-                    return 0;
-                }
+                var source = src.SearchBy();
+                if (request.ToLower() == source.ToLower())
+                    req.FullMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1));
                 else
                 {
-                    return target.Length;
-                }
-            }
-            else if (String.IsNullOrEmpty(target))
-            {
-                return source.Length;
-            }
-
-            int m = source.Length;
-            int n = target.Length;
-            int[,] H = new int[m + 2, n + 2];
-
-            int INF = m + n;
-            H[0, 0] = INF;
-            for (int i = 0; i <= m; i++) { H[i + 1, 1] = i; H[i + 1, 0] = INF; }
-            for (int j = 0; j <= n; j++) { H[1, j + 1] = j; H[0, j + 1] = INF; }
-
-            SortedDictionary<char, int> sd = new SortedDictionary<char, int>();
-            foreach (char Letter in (source + target))
-            {
-                if (!sd.ContainsKey(Letter))
-                    sd.Add(Letter, 0);
-            }
-
-            for (int i = 1; i <= m; i++)
-            {
-                int DB = 0;
-                for (int j = 1; j <= n; j++)
-                {
-                    int i1 = sd[target[j - 1]];
-                    int j1 = DB;
-
-                    if (source[i - 1] == target[j - 1])
-                    {
-                        H[i + 1, j + 1] = H[i, j];
-                        DB = j;
-                    }
+                    double fuz = GetFuzze(request, source);
+                    if (fuz == 1.0d)
+                        req.FullSubstringMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
                     else
-                    {
-                        H[i + 1, j + 1] = Math.Min(H[i, j], Math.Min(H[i + 1, j], H[i, j + 1])) + 1;
-                    }
+                        if (fuz > Fuzzyness)
+                            req.IncompleteMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
 
-                    H[i + 1, j + 1] = Math.Min(H[i + 1, j + 1], H[i1, j1] + (i - i1 - 1) + 1 + (j - j1 - 1));
                 }
-
-                sd[source[i - 1]] = i;
             }
-
-            return H[m + 1, n + 1];
+            req.FullMatch.OrderBy(x => x.Value.Key);
+            req.FullSubstringMatch.OrderBy(x => x.Value.Key);
+            req.IncompleteMatch.OrderBy(x => x.Value.Value);
+            return req;
+        }
+        public static double GetFuzze(string a, string b)
+        {
+            a = a.ToLower();
+            b = b.ToLower();
+            double maxF = 0, fuz;
+            for (int i = 0; i <= b.Length - a.Length; i++)
+            {
+                fuz = FuzzyBContainsA(b.Substring(i, a.Length), a);
+                if (fuz > maxF)
+                    maxF = fuz;
+            }
+            return maxF;
         }
 
-        public static bool AInB(string a, string b)
+        public static bool BContainsA(string a, string b)
         {
-            int k = 3, ml = 9999, minLev = 99999;
             a = a.ToLower();
             b = b.ToLower();
             string tot = b;
             for (int i = 0; i <= tot.Length - a.Length; i++)
             {
-                ml = DamerauLevenshteinDistance(tot.Substring(i, a.Length), a);
-                minLev = ml < minLev ? ml : minLev;
+                if (FuzzyBContainsA(b.Substring(i, a.Length), a) > Fuzzyness)
+                    return true;
             }
-            return minLev <= k;
+
+            return false;
+        }
+
+        public static double FuzzyBContainsA(string a, string b)
+        {
+            int levenshteinDistance = LevenshteinDistance(a, b);
+            int length = Math.Max(a.Length, b.Length);
+            return 1.0 - (double)levenshteinDistance / length;
+        }
+
+        public static int LevenshteinDistance(string src, string dest)
+        {
+            int[,] d = new int[src.Length + 1, dest.Length + 1];
+            int i, j, cost, deleteCost = 1, insertCost = 1, subtCost = 1;
+            char[] str1 = src.ToCharArray();
+            char[] str2 = dest.ToCharArray();
+
+            for (i = 0; i <= str1.Length; i++)
+            {
+                d[i, 0] = i;
+            }
+            for (j = 0; j <= str2.Length; j++)
+            {
+                d[0, j] = j;
+            }
+            for (i = 1; i <= str1.Length; i++)
+            {
+                for (j = 1; j <= str2.Length; j++)
+                {
+
+                    if (str1[i - 1] == str2[j - 1])
+                        cost = 0;
+                    else
+                        cost = subtCost;
+
+                    d[i, j] =
+                        Math.Min(
+                            d[i - 1, j] + deleteCost,              // Deletion
+                            Math.Min(
+                                d[i, j - 1] + insertCost,          // Insertion
+                                d[i - 1, j - 1] + cost)); // Substitution
+
+                    if ((i > 1) && (j > 1) && (str1[i - 1] ==
+                        str2[j - 2]) && (str1[i - 2] == str2[j - 1]))
+                    {
+                        d[i, j] = Math.Min(d[i, j], d[i - 2, j - 2] + cost);
+                    }
+                }
+            }
+
+            return d[str1.Length, str2.Length];
+        }
+    }
+
+    public interface Searchable
+    {
+        public string SearchBy();
+    }
+    public class SearchRequest
+    {
+        public string Request { get; set; }
+        public Dictionary<int, KeyValuePair<Searchable, double>> FullMatch { get; set; }
+        public Dictionary<int, KeyValuePair<Searchable, double>> FullSubstringMatch { get; set; }
+        public Dictionary<int, KeyValuePair<Searchable, double>> IncompleteMatch { get; set; }
+
+        public SearchRequest()
+        {
+            FullMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
+            FullSubstringMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
+            IncompleteMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
         }
     }
 }
