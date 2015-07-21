@@ -123,7 +123,7 @@ namespace Swappy_V2.Modules
 
     public interface Searchable
     {
-        public string SearchBy();
+        string SearchBy();
     }
     public class SearchRequest
     {
