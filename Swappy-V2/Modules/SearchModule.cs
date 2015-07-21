@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Swappy_V2.Classes;
 
 namespace Swappy_V2.Modules
 {
@@ -12,25 +13,33 @@ namespace Swappy_V2.Modules
         {
             SearchRequest req = new SearchRequest { Request = request };
             int cnt = 0;
+            var FullMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
+            var FullSubstringMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
+            var IncompleteMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
             foreach (var src in ar)
             {
                 var source = src.SearchBy();
                 if (request.ToLower() == source.ToLower())
-                    req.FullMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1));
+                    FullMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1));
                 else
                 {
                     double fuz = GetFuzze(request, source);
                     if (fuz == 1.0d)
-                        req.FullSubstringMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
+                        FullSubstringMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
                     else
                         if (fuz > Fuzzyness)
-                            req.IncompleteMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
+                            IncompleteMatch.Add(cnt++, new KeyValuePair<Searchable, double>(src, 1 - fuz));
 
                 }
             }
-            req.FullMatch.OrderBy(x => x.Value.Key);
-            req.FullSubstringMatch.OrderBy(x => x.Value.Key);
-            req.IncompleteMatch.OrderBy(x => x.Value.Value);
+            FullMatch.OrderBy(x => x.Value.Key);
+            FullSubstringMatch.OrderBy(x => x.Value.Key);
+            IncompleteMatch.OrderBy(x => x.Value.Value);
+
+            req.FullMatch = (from a in FullMatch select a.Value).ToList<KeyValuePair<Searchable, double>>(FullMatch.Count);
+            req.FullSubstringMatch = (from a in FullSubstringMatch select a.Value).ToList<KeyValuePair<Searchable, double>>(FullSubstringMatch.Count);
+            req.IncompleteMatch = (from a in IncompleteMatch select a.Value).ToList<KeyValuePair<Searchable, double>>(IncompleteMatch.Count);
+
             return req;
         }
         public static double GetFuzze(string a, string b)
@@ -119,15 +128,15 @@ namespace Swappy_V2.Modules
     public class SearchRequest
     {
         public string Request { get; set; }
-        public Dictionary<int, KeyValuePair<Searchable, double>> FullMatch { get; set; }
-        public Dictionary<int, KeyValuePair<Searchable, double>> FullSubstringMatch { get; set; }
-        public Dictionary<int, KeyValuePair<Searchable, double>> IncompleteMatch { get; set; }
+        public List<KeyValuePair<Searchable, double>> FullMatch { get; set; }
+        public List<KeyValuePair<Searchable, double>> FullSubstringMatch { get; set; }
+        public List<KeyValuePair<Searchable, double>> IncompleteMatch { get; set; }
 
         public SearchRequest()
         {
-            FullMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
-            FullSubstringMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
-            IncompleteMatch = new Dictionary<int, KeyValuePair<Searchable, double>>();
+            FullMatch = new List<KeyValuePair<Searchable, double>>();
+            FullSubstringMatch = new List<KeyValuePair<Searchable, double>>();
+            IncompleteMatch = new List<KeyValuePair<Searchable, double>>();
         }
     }
 }
