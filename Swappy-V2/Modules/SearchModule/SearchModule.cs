@@ -121,10 +121,7 @@ namespace Swappy_V2.Modules
         }
     }
 
-    public interface Searchable
-    {
-        string SearchBy();
-    }
+   
     public class SearchRequest
     {
         public string Request { get; set; }
