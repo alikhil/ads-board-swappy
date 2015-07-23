@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Swappy_V2.Modules;
 
 namespace Swappy_V2.Models
 {
-    public class DealModel
+    public class DealModel : Searchable
     {
         public int Id { get; set; }
         public int AppUserId { get; set; }
