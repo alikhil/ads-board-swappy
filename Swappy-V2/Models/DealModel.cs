@@ -9,7 +9,7 @@ namespace Swappy_V2.Models
     public class DealModel
     {
         public int Id { get; set; }
-        public int AppUserModelId { get; set; }
+        public int AppUserId { get; set; }
         public int? ItemToChangeId { get; set; }
 
         [Required]
