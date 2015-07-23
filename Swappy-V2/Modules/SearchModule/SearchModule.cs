@@ -120,20 +120,4 @@ namespace Swappy_V2.Modules
             return d[str1.Length, str2.Length];
         }
     }
-
-   
-    public class SearchRequest
-    {
-        public string Request { get; set; }
-        public List<KeyValuePair<Searchable, double>> FullMatch { get; set; }
-        public List<KeyValuePair<Searchable, double>> FullSubstringMatch { get; set; }
-        public List<KeyValuePair<Searchable, double>> IncompleteMatch { get; set; }
-
-        public SearchRequest()
-        {
-            FullMatch = new List<KeyValuePair<Searchable, double>>();
-            FullSubstringMatch = new List<KeyValuePair<Searchable, double>>();
-            IncompleteMatch = new List<KeyValuePair<Searchable, double>>();
-        }
-    }
 }
