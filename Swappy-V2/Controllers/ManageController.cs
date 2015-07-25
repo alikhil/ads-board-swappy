@@ -89,7 +89,9 @@ namespace Swappy_V2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAppModelData(IndexViewModel model)
         {
-            if (ModelState.IsValid)
+            bool cityIsValid = await CustomValidator.CityValid(model.City);
+
+            if (ModelState.IsValid && cityIsValid)
             {
                 var appUserId = User.Identity.GetAppUserId();
                 var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
@@ -124,6 +126,8 @@ namespace Swappy_V2.Controllers
                 await UserManager.UpdateAsync(user);
                 return RedirectToAction("Index");
             }
+            if (!cityIsValid)
+                ModelState.AddModelError("City", "Указанный город не существует");
             return View("Index", model);
         }
         //
