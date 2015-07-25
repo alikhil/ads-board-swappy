@@ -12,6 +12,7 @@ namespace Swappy_V2.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+        public AppUserModelEditView AppUserData { get; set; }
     }
 
     public class ManageLoginsViewModel
