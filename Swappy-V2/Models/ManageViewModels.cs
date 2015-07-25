@@ -9,10 +9,26 @@ namespace Swappy_V2.Models
     {
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
-        public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
-        public AppUserModelEditView AppUserData { get; set; }
+
+        [Required]
+        [Display(Name = "Имя")]
+        [MaxLength(50, ErrorMessage = "{0} должно иметь не более 50 символов")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Фамилия")]
+        public string Surname { get; set; }
+
+        [Required]
+        [Display(Name = "Номер телефона")]
+        [RegularExpression(@"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$", ErrorMessage = "Укажите корректный номер телефона")]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [Display(Name = "Город")]
+        public string City { get; set; }
     }
 
     public class ManageLoginsViewModel
