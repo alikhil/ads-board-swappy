@@ -71,21 +71,28 @@ namespace Swappy_V2.Controllers
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
-                AppUserData = new AppUserModelEditView()
-                {
-                    City = appUser.City,
-                    Name = appUser.Name,
-                    PhoneNumber = appUser.PhoneNumber,
-                    Surname = appUser.Surname
-                }
+                City = appUser.City,
+                Name = appUser.Name,
+                PhoneNumber = appUser.PhoneNumber,
+                Surname = appUser.Surname
+                
             };
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditAppModelData(IndexViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View("Index", model);
+        }
         //
         // POST: /Manage/RemoveLogin
         [HttpPost]
