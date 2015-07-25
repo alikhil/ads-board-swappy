@@ -6,8 +6,10 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Data.Entity;
 using Swappy_V2.Models;
 using Swappy_V2.Classes;
+using System.Security.Claims;
 
 namespace Swappy_V2.Controllers
 {
@@ -16,6 +18,7 @@ namespace Swappy_V2.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private DataContext db = new DataContext();
 
         public ManageController()
         {
@@ -66,7 +69,6 @@ namespace Swappy_V2.Controllers
 
             var userId = User.Identity.GetUserId();
             var appUserId = User.Identity.GetAppUserId();
-            DataContext db = new DataContext();
             var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
             var model = new IndexViewModel
             {
@@ -85,11 +87,42 @@ namespace Swappy_V2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditAppModelData(IndexViewModel model)
+        public async Task<ActionResult> EditAppModelData(IndexViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var appUserId = User.Identity.GetAppUserId();
+                var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
+                appUser.Name = model.Name;
+                appUser.PhoneNumber = model.PhoneNumber;
+                appUser.Surname = model.Surname;
+                appUser.City = model.City;
+                db.Entry(appUser).State = EntityState.Modified;
+                await db.SaveChangesAsync();
 
+                var user = UserManager.Users.FirstOrDefault(x => x.AppUserId == appUserId);
+                user.City = model.City;
+                user.Surname = model.Surname;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Name = model.Name;
+
+                var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
+                var Identity = new ClaimsIdentity(User.Identity);
+
+                Identity.RemoveClaim(Identity.FindFirst("Name"));
+                Identity.AddClaim(new Claim("Name", model.Name));
+
+                Identity.RemoveClaim(Identity.FindFirst("City"));
+                Identity.AddClaim(new Claim("City", model.City));
+
+                Identity.RemoveClaim(Identity.FindFirst("Surname"));
+                Identity.AddClaim(new Claim("Surname", model.Surname));
+
+                AuthenticationManager.AuthenticationResponseGrant = new AuthenticationResponseGrant(
+                    new ClaimsPrincipal(Identity), new AuthenticationProperties { IsPersistent = true });
+
+                await UserManager.UpdateAsync(user);
+                return RedirectToAction("Index");
             }
             return View("Index", model);
         }
