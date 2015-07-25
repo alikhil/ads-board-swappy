@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Swappy_V2.Modules;
+using Swappy_V2.Classes;
 
 namespace Swappy_V2.Models
 {
@@ -28,5 +29,10 @@ namespace Swappy_V2.Models
         [Required]
         [Display(Name="Город")]
         public string City { get; set; }
+
+        public string SearchBy()
+        {
+            return this.ItemToChange.Title;
+        }
     }
 }
