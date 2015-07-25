@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Swappy_V2.Models;
+using Swappy_V2.Classes;
 
 namespace Swappy_V2.Controllers
 {
@@ -64,13 +65,23 @@ namespace Swappy_V2.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            var appUserId = User.Identity.GetAppUserId();
+            DataContext db = new DataContext();
+            var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                AppUserData = new AppUserModelEditView()
+                {
+                    City = appUser.City,
+                    Name = appUser.Name,
+                    PhoneNumber = appUser.PhoneNumber,
+                    Surname = appUser.Surname
+                }
             };
             return View(model);
         }
