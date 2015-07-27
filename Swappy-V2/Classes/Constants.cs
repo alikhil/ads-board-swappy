@@ -24,5 +24,11 @@ namespace Swappy_V2.Classes
         {
             TempImageFullPath = HttpContext.Current.Server.MapPath(TempImagesPath);
         }
+
+        /// <summary>
+        /// 4 МБ для изображения
+        /// </summary>
+        public static int MaxImageLengthBytes = 4194304;
+        public static string[] AllowedImageExtensions = new string[] { ".jpg", ".png", ".jpeg" };
     }
 }
