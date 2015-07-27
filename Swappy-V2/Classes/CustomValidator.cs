@@ -22,7 +22,7 @@ namespace Swappy_V2.Classes
             return resp == city;
         }
 
-        public static ValidStatus FileVaild(HttpPostedFileWrapper file)
+        public static ValidStatus ImageVaild(HttpPostedFileWrapper file)
         {
             List<string> errors = new List<string>();
             ValidStatus result = ValidStatus.Unknown;
