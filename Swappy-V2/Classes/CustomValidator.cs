@@ -48,12 +48,12 @@ namespace Swappy_V2.Classes
     }
     public enum ValidStatus
     {
+        Unknown,
         Valid,
         MaxLengthOverload,
         IncorrectFormat,
         IncorrectType,
         NotValid,
-        Empty,
-        Unknown
+        Empty
     }
 }
