@@ -1,0 +1,192 @@
+﻿@using Swappy_V2.Models
+@model DealModel
+
+@{
+    var edit = ViewData["EditDeal"] != null && (bool)ViewData["EditDeal"] == true;
+    ViewBag.Title = edit ? "Редактировать" : "Создать объявление";
+    
+}
+<form enctype="multipart/form-data" id="file-form"></form>
+
+@using (Html.BeginForm())
+{
+    if (Model != null)
+    {
+
+        <div class="dl-horizontal">
+            @{
+                Html.RenderPartial("ShowDeal", Model, new ViewDataDictionary { { "Edit", true } });
+            }
+        </div>
+    }
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(false, " ", new { @class = "text-danger", id = "valid-errors" })
+
+
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label for="file" class="control-label">Загрузите изображение(@String.Join(",",Swappy_V2.Classes.AppConstants.AllowedImageExtensions))</label>
+            <input type="file" id="file" name="file" />
+        </div>
+       
+        @Html.HiddenFor(model => model.ItemToChange.Id)
+
+        @Html.HiddenFor(model => model.ItemToChange.Title, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ItemToChange.Title, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.ItemToChange.Description, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ItemToChange.Description, "", new { @class = "text-danger" })
+
+        <div id="tooltip"></div>
+
+        @*Modal window for items*@
+        <div class="modal fade" id="itemEditModal" mode="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-small">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close cancel-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Редактировать</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="title-text" class="control-label">Название</label>
+                                <input type="text" class="form-control" id="title-text">
+                            </div>
+                            <div class="form-group">
+                                <label for="description-text" class="control-label">Примечания</label>
+                                <textarea class="form-control fixed-area" id="description-text"></textarea>
+                            </div>
+                        </form>
+                        <div id="modal-errors" class="text-danger">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default cancel-btn" data-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary save-btn">Изменить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*Modal window for main info*@
+        <div class="modal fade" id="mainInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleInfoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-middle">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close cancel-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="exampleInfoModalLabel">Вещь, которую вы хотите обменять</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="mainModalForm">
+                            <div class="form-group ">
+                                <label for="main-title-text" class="control-label col-md-offset-2">Название</label>
+                                <input type="text" class="form-control col-md-offset-2" id="main-title-text">
+                            </div>
+                            <div class="form-group">
+                                <label for="main-description-text" class="control-label col-md-offset-2">Описание</label>
+                                <textarea class="form-control col-md-offset-2  fixed-area-middle" id="main-description-text"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="main-another-variant-text" class="control-label col-md-offset-2 ">Рассмотрю другие предложения</label>
+                                <input id="main-another-variant-text" class="check-box col-md-offset-2 " type="checkbox" value="true" name="AnotherVariants" data-val-required="Поле 'Рассмотрю другие варианты' должно быть указано" data-val="true" checked="checked" />
+                                <input type="hidden" value="false" name="AnotherVariants" />
+                            </div>
+                        </form>
+                        <div id="main-modal-errors" class="text-danger">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default cancel-btn" data-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary main-save-btn">Изменить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*CopyPasteEnd*@
+
+        @Html.HiddenFor(model => model.AnotherVariants)
+        @Html.ValidationMessageFor(model => model.AnotherVariants, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script type="text/javascript">
+    $(function () {
+        $($('form')[2]).attr("enctype", "multipart/form-data");
+        $("#file").change(function () {
+            var formData = new FormData($('#file-form'));
+            $('progress').show();
+            var fl = this.files[0];
+            formData.append('file', fl);
+            $("#valid-errors > ul").remove();
+            $.ajax({
+                url: '@Url.Action("FileValidCheck")', 
+                type: 'POST',
+                xhr: function () { 
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { 
+                        myXhr.upload.addEventListener('progress', progressHandlingFunction, false); 
+                    }
+                    return myXhr;
+                },
+                success: completeHandler,
+                error: errorHandler,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+    });
+    function progressHandlingFunction(e) {
+        if (e.lengthComputable) {
+        }
+    }
+    function completeHandler(data) {
+        var obj = $.parseJSON(data);
+        if (obj.Status == "OK")
+        {
+            $('img').attr('src', obj.Result);
+        }
+        else {
+            var list = obj.Result;
+            console.log(list);
+            for (var s = 0; s < list.length;s++)
+            {
+                console.log(s);
+                $('#valid-errors').append('<ul>*' + list[s] + '<ul/>');
+            }
+        }
+
+    }
+    function errorHandler(er) {
+        alert('Произошла ошибка!');
+    }
+    function deleteContainer(evt) {
+        evt = evt || window.event;
+        var target = evt.target || evt.srcElement;
+        target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
+    }
+    function OnCompleteAjax(data) {
+        $editBtn = $(data).find('.edit-button');
+        initBtns();
+
+        $btnId = $editBtn.attr('btn-id');
+        $id = $btnId.split('-')[1];
+        $trueEditBtn = $(".edit-button[btn-id*='" + $btnId + "']");
+        $trueEditBtn.attr('mode', 'create');
+        $trueEditBtn.click();
+        $trueEditBtn.parent().hide();
+        deleteInps($id);
+        //deleteInps($id);
+    }
+    </script>
+}

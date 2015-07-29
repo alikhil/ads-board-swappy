@@ -1,0 +1,26 @@
+﻿@using Swappy_V2.Classes;
+@model Swappy_V2.Models.ItemModel
+@{ 
+   var bcol = ViewData["color"];
+   var edit = ViewData["Edit"] != null && (bool)ViewData["Edit"] == true;
+   }
+<div class="inline">
+    <div class="item-tag btn-group">
+        <button type="button" id="itemBtn-@Model.Id" data-tooltip="@Html.DisplayFor(model => model.Description)" class="btn btn-@bcol btn-xs">@Html.DisplayFor(model => model.Title)</button>
+        @if (edit) 
+        { 
+            <button class="btn btn-@bcol btn-xs edit-button" mode="edit" btn-id="itemBtn-@Model.Id" data-toggle="modal" data-target="#itemEditModal"><span class="glyphicon glyphicon-pencil" /></button>
+            <button type="button" class="btn btn-@bcol btn-xs close-button" btn-id="itemBtn-@Model.Id"><span class="glyphicon glyphicon-remove" /></button>
+            <button type="button" id="restoreBtn-@Model.Id" btn-id="itemBtn-@Model.Id" class="btn btn-xs restore-button" style="display:none;">Восстановить</button>
+        }
+        @{ var pt = "Variants" + ".index";}
+
+        <input type="hidden" name="@pt" value="@ViewData.Model.Id" />
+        @{ var fieldPrefix = string.Format("{0}[{1}].", "Variants", ViewData.Model.Id); }
+        @Html.Hidden(fieldPrefix + "Id", ViewData.Model.Id)
+
+
+        @Html.Hidden(fieldPrefix + "Title", ViewData.Model.Title)
+        @Html.Hidden(fieldPrefix + "Description", ViewData.Model.Description)
+    </div>
+</div>

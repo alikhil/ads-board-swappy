@@ -1,0 +1,113 @@
+﻿@using Swappy_V2.Models;
+@using Swappy_V2.Classes;
+@model DealModel
+@{
+    var url = !string.IsNullOrEmpty(Model.ItemToChange.ImageUrl) ? Model.ItemToChange.ImageUrl : AppConstants.NoImagePath;
+    var edit = ViewData["Edit"] != null && (bool)ViewData["Edit"] == true;
+    var manage = ViewData["Manage"] != null && (bool)ViewData["Manage"] == true;
+    }
+
+<div>
+    @Html.HiddenFor(x => x.Id)
+    <dl class="container">
+        <row>
+            <dt>
+                 <img width="150" id="ItemToChangeImage" class="center img-thumbnail mini-image" height="150" src="@url" /> 
+                @if (!edit) 
+                { 
+                    using (Html.BeginForm("Info", "Deals", FormMethod.Get, htmlAttributes: new { @class = "inline center text-center" }))
+                    {   @Html.Hidden("dealId", Model.Id)
+                        <button class="btn btn-info  btn-lg" style="margin-top:7px; " type="submit">Подробнее</button>
+                    }
+                }
+            </dt>
+            <dd>
+
+
+                @if (edit)
+                {
+                    <h4><b id="ItemToChangeTitle" class="inline pull-left">@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
+                    <button class="btn btn-xs edit-button inline" data-toggle="modal" data-target="#mainInfoModal"><span class="glyphicon glyphicon-pencil" /></button>
+                    <p id="ItemToChangeDescription">@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+                }
+                else if (manage)
+                {
+                    <div class="inline">
+                        <h4><b>@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
+                    </div>
+
+                    <div class="btn-group inline">
+                        @using (Html.BeginForm("Edit", "Deals", FormMethod.Get, htmlAttributes: new { @class = "inline" }))
+                        {   @Html.HiddenFor(m => m.Id)
+                            <button class="btn btn-xs" type="submit"><span class="glyphicon glyphicon-pencil" /></button>
+                        }
+                        @using (Html.BeginForm("Delete", "Deals", FormMethod.Get, htmlAttributes: new { @class = "inline" }))
+                        {
+                            @Html.HiddenFor(m => m.Id)
+                            <button class="btn btn-xs" type="submit"><span class="glyphicon glyphicon-trash" /></button>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <h4><b>@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
+                    <p>@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+                }
+
+                @if (Model.AnotherVariants)
+                { <p id="AnotherVariant_" class="text-success">Рассмотрю ваши варианты или обменяю на:</p> }
+                else
+                { <p id="AnotherVariant_">Обменяю на:</p>}
+
+                <div>
+                    @{int cnt = 0;}
+                    <div id="eitems">
+                        @if (Model.Variants != null)
+                        {
+                            foreach (ItemModel item in Model.Variants)
+                            {
+                                if (item != null)
+                                {
+                                    string str = cnt++ % 2 == 0 ? "primary" : "success";
+                                    Html.RenderPartial("ShowItem", item, new ViewDataDictionary(ViewData) { { "color", str } });
+                                }
+
+                            }
+                        }
+                    </div>
+                    @if (edit)
+                    { 
+                        <strong>
+                            @Ajax.ActionLink("Добавить вещь", "AddNewItem", "Deals", new object { }, new AjaxOptions
+                                {
+                                    UpdateTargetId = "eitems",
+                                    InsertionMode = InsertionMode.InsertAfter,
+                                    OnSuccess = "OnCompleteAjax(data)"
+                                }, htmlAttributes: new { @class = "inline btn btn-xs btn-info item-tag" })
+                        </strong>
+                    }
+                </div>
+
+            </dd>
+
+        </row>
+
+    </dl>
+    @if (Model.Variants != null)
+    {
+        foreach (ItemModel item in Model.Variants)
+        {
+            if (item != null)
+            {
+                var fieldPrefix = string.Format("{0}[{1}].", "Variants", item.Id);
+                <div class="form-group">
+                    <div class="col-md-offset-2"> @Html.FilteredValidationSummary(fieldPrefix)</div>
+                </div>
+            }
+        }
+    }
+</div>
+
+
+

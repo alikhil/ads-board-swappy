@@ -1,0 +1,77 @@
+﻿@model Swappy_V2.Models.DealModel
+
+<div id="tooltip"></div>
+@{
+    ViewBag.Title = Model.ItemToChange.Title;
+    var imagePath = string.IsNullOrEmpty(Model.ItemToChange.ImageUrl) ? Swappy_V2.Classes.AppConstants.NoImagePath : Model.ItemToChange.ImageUrl;
+}
+@if (Model != null)
+{
+    <div>
+        <br />
+
+
+        <dl class="dl-horizontal">
+            <dt class="wide-dt">
+                <h2 class="text-center">@Model.ItemToChange.Title</h2>
+            </dt>
+            <dd></dd>
+            <dt class="img-carcas wide-dt">
+                <img class="full-image center" src="@imagePath" />
+            </dt>
+            <dd class="float-righter">
+                <br />
+                <p> <b>@Html.DisplayNameFor(model => model.ItemToChange.Description)</b></p>
+                <p>@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+
+                <p><b>@Html.DisplayNameFor(model => model.Variants)</b> </p>
+                <p>
+                    @{int cnt = 0;}
+                    @foreach (var item in Model.Variants)
+                    {
+                        if (item != null)
+                        {
+                            string str = cnt++ % 2 == 0 ? "primary" : "success";
+                            <div class="inline">@{Html.RenderPartial("ShowItem", item, new ViewDataDictionary(ViewData) { { "color", str } });}</div>
+                        }
+
+                    }
+                </p>
+                <p><b>Телефон:</b></p>
+                <p>
+                    <div id="number-result" class="item-tag">
+                        <button class="btn btn-warning btn-xs " id="call-btn"> Показать номер </button>
+                    </div>
+                </p>
+                <p><b>Город:</b></p>
+                <p>  @Model.City </p>
+            </dd>
+
+
+        </dl>
+    </div>
+}
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('#call-btn').click(function () {
+                $.ajax({
+                    dataType : "json",
+                    url: '@Url.Action("GetPhoneNumber","Deals")',
+                    data: { "DealId" : @Model.Id },
+                    success: function (result) {
+                        if (result.Status == "ok") {
+                            $('#number-result').html("<a href='tel:" + result.Result + "' class='btn btn-warning btn-xs'>" + result.Result + "</a>");
+                        }
+                        else {
+
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('oops, something bad happened');
+                    }
+                });
+            });
+        });
+    </script>
+}

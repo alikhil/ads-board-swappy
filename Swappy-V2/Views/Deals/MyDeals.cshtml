@@ -1,0 +1,19 @@
+﻿@using Swappy_V2.Models
+@model IEnumerable<DealModel>
+@{
+    ViewBag.Title = "Мои объявления";
+}
+
+<h2>Управление объявлениями</h2>
+
+<div class="dl-horizontal">
+    @if (Model != null)
+    {
+        foreach (DealModel deal in Model)
+        {
+            Html.RenderPartial("ShowDeal", deal, new ViewDataDictionary { { "Manage", true } });
+
+        }
+    }
+    <div id="tooltip"></div>
+</div>

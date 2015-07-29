@@ -1,0 +1,23 @@
+﻿@model Swappy_V2.Models.DealModel
+@{
+    ViewBag.Title = "Удалить объявление";
+}
+
+<h2>Удалить объявление</h2>
+
+<h3>Вы уверены что хотите удалить это объявление?</h3>
+
+<div>
+    <div class="dl-horizontal">
+        @{Html.RenderPartial("ShowDeal", Model);}
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id);
+        <div class="form-actions no-color">
+            <input type="submit" value="Удалить" class="btn btn-default" /> |
+            @Html.ActionLink("К объявлениям", "MyDeals")
+        </div>
+    }
+</div>
