@@ -6,15 +6,15 @@ $(function () {
     $title = $("#ItemToChange_Title").val();
     $description = $("#ItemToChange_Description").val();
     $link = $("#ItemToChange_ImageUrl").val();
-    $checked = $("#AnotherVariant").val();
+    $checked = $("#AnotherVariants").val();
 
     $("#main-title-text").val($title);
     $("#main-description-text").val($description);
     $("#main-link-text").val($link);
     $("#main-another-variant-text").prop('checked', $checked);
 
-    $('#mainModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
+    $('#itemEditModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
         var mode = button.attr("mode");
         var modal = $(this);
         modal.attr("mode", mode);
@@ -36,8 +36,7 @@ $(function () {
         }
        
     });
-    $('cancel-btn').click(function (event) {
-    });
+   
     $('.main-save-btn').click(function (event)
     {
         $modal = $("#mainInfoModal");
@@ -45,7 +44,6 @@ $(function () {
         $description = $('#main-description-text').val();
         $link = $('#main-link-text').val();
         $checked = $('#main-another-variant-text').is(":checked");
-
         $.ajax({
             url: 'CheckItemValid',
             data: { "Title": $title, "Description": $description, "ImageUrl" : $link},
@@ -55,7 +53,7 @@ $(function () {
                     $("#ItemToChange_Title").val($title);
                     $("#ItemToChange_Description").val($description);
                     $("#ItemToChange_ImageUrl").val($link);
-                    $("#AnotherVariant").val($checked);
+                    $("#AnotherVariants").val($checked);
 
                     $("#ItemToChangeTitle").text($title);
                     $("#ItemToChangeDescription").text($description);
@@ -80,7 +78,7 @@ $(function () {
     });
     $('.save-btn').click(function (event) {
 
-            $modal = $("#mainModal");
+            $modal = $("#itemEditModal");
             $mode = $modal.attr("mode");
             $title = $("#title-text").val();
             $description = $("#description-text").val();
@@ -165,7 +163,7 @@ function initBtns()
                      });
     });
     $('.restore-button').click(function (event) {
-        $button = $(this); // Button that triggered the modal
+        $button = $(this); 
         $ids = $button.attr("btn-id");
         $id = $ids.split('-')[1];
         $(this).parent().children().each(function () {
@@ -177,7 +175,7 @@ function initBtns()
         $(this).hide();
     });
     $('.close-button').click(function (event) {
-        var button = $(this); // Button that triggered the modal
+        var button = $(this); 
         $ids = button.attr('btn-id');
         $id = $ids.split('-')[1];
         $(button).parent().children().each(function () {
