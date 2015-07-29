@@ -9,8 +9,6 @@ namespace Swappy_V2.Models
     public class ItemModel
     {
         public int Id { get; set; }
-        public int DealId { get; set; }
-
         [Required]
         [Display(Name="Название")]
         [MaxLength(50, ErrorMessage = "{0} должно иметь не более {1} символов")]
@@ -22,6 +20,7 @@ namespace Swappy_V2.Models
 
         public string ImageUrl { get; set; }
 
-        public DealModel Deal { get; set; }
+        public int? DealModelId { get; set; }
+        public DealModel DealModel { get; set; }
     }
 }
