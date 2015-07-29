@@ -26,7 +26,6 @@ namespace Swappy_V2.Models
         [Display(Name="Рассматрю другие варианты")]
         public bool AnotherVariants { get; set; }
 
-        [Required]
         [Display(Name="Город")]
         public string City { get; set; }
 
