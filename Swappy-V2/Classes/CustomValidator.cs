@@ -35,7 +35,7 @@ namespace Swappy_V2.Classes
                     result |= ValidStatus.IncorrectType | ValidStatus.NotValid;
 
                 var ext = Path.GetExtension(file.FileName);
-                if (AppConstants.AllowedImageExtensions.Contains(ext))
+                if (!AppConstants.AllowedImageExtensions.Contains(ext))
                     result |= ValidStatus.IncorrectFormat| ValidStatus.NotValid;
 
             }
@@ -48,12 +48,12 @@ namespace Swappy_V2.Classes
     }
     public enum ValidStatus
     {
-        Unknown,
-        Valid,
-        MaxLengthOverload,
-        IncorrectFormat,
-        IncorrectType,
-        NotValid,
-        Empty
+        Unknown = 0x0,
+        Valid = 0x01,
+        MaxLengthOverload = 0x02,
+        IncorrectFormat = 0x04,
+        IncorrectType = 0x08,
+        NotValid = 0x10,
+        Empty = 0x20
     }
 }
