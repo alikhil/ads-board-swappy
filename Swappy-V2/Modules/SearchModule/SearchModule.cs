@@ -6,7 +6,7 @@ using Swappy_V2.Classes;
 
 namespace Swappy_V2.Modules
 {
-    public class SearchModule
+    public static class SearchModule
     {
         public static double Fuzzyness = 0.7;
         public static SearchRequest FindOut(string request, IEnumerable<Searchable> ar)
@@ -57,6 +57,20 @@ namespace Swappy_V2.Modules
         }
 
         public static bool BContainsA(string a, string b)
+        {
+            a = a.ToLower();
+            b = b.ToLower();
+            string tot = b;
+            for (int i = 0; i <= tot.Length - a.Length; i++)
+            {
+                if (FuzzyBContainsA(b.Substring(i, a.Length), a) > Fuzzyness)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static bool ContainsA(this string b, string a)
         {
             a = a.ToLower();
             b = b.ToLower();
