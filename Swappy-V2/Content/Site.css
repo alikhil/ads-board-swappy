@@ -22,3 +22,131 @@ select,
 textarea {
     max-width: 280px;
 }
+.notlong{
+    max-width : 350px;
+}
+.inline{
+    display:inline-block;
+}
+
+#tooltip {
+    z-index: 9999;
+	position: absolute;
+	display: none;
+	top:0px;
+	left:0px;
+	background-color: #666666;
+	padding: 5px 10px 5px 10px;
+	color: white;
+  /*opacity: 0.6;*/
+    width: 150px;
+    font-size: 13px;
+    white-space: normal;
+	border-radius: 5px; 
+}
+
+
+.wrap li img {max-width: 100%;}
+
+.item-tag {
+    margin-top : 4px;
+}
+
+/* Цвета для тегов ItemModel*/
+.back-success {
+    background-color : #62c462 ;
+    /*#5cb85c*/
+}
+.back-primary {
+    background-color : #428bca;
+}
+
+/* Размеры модальных окон*/
+.modal-middle {
+    max-width:450px;
+}
+.modal-small {
+    width : 300px;
+}
+/*Для полей ввода в модальных окнах*/
+.fixed-area {
+    max-width : 268px;
+    max-height :70px;
+    min-width : 268px;
+    min-height :70px;
+}
+.fixed-area-middle {
+
+    resize : vertical;
+    min-width : 227px; 
+ 
+}
+/* Изображения в ShowDeal*/
+.mini-image {
+    max-height:150px;
+    max-width:150px;
+    width:auto;
+    height:auto;
+}
+/* Изображение в Info*/
+.full-image{
+    max-height : 100%;
+    max-width :  100%;
+    width : auto;
+    height : auto;
+}
+
+/* Для регулирования изображения*/
+.center{
+  margin : auto;
+  display : block;
+}
+/* Мухлежи в Info*/
+@media (min-width:320px) {
+     /* smartphones, iPhone, portrait 480x320 phones */ 
+     .img-carcas {
+        width : 270px;
+        height : 270px;
+    }
+     .wide-dt {
+        width : 270px !important;
+    }
+     .float-righter {
+         margin-left: 5% !important;
+     }
+}
+@media(min-width : 360px){
+    .wide-dt {
+        width : 330px !important;
+    }
+    .float-righter {
+         margin-left: 15% !important;
+     }
+}
+@media(min-width : 400px)
+{
+     .wide-dt {
+        width : 360px !important;
+    }
+     .float-righter {
+         margin-left: 20% !important;
+     }
+}
+@media (min-width:481px) { 
+    /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ 
+    .img-carcas {
+        width : 400px;
+        height : 400px;
+    }
+    .float-righter {
+         
+     }
+    .wide-dt {
+        width : 400px !important;
+    }
+    
+}
+@media (min-width:641px) { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ }
+@media (min-width:961px) { /* tablet, landscape iPad, lo-res laptops ands desktops */ }
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */ }
+@media (min-width:1281px) { /* hi-res laptops and desktops */ }
