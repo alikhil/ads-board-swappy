@@ -17,6 +17,7 @@ namespace Swappy_V2
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AppConstants.Init();
+            JobScheduler.Start();
         }
     }
 }
