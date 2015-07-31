@@ -19,5 +19,11 @@ namespace Swappy_V2
             AppConstants.Init();
             JobScheduler.Start();
         }
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            Exception ex = Server.GetLastError();
+            NLog.LogManager.GetCurrentClassLogger().Error(ex.Message, ex);
+            //TODO crash report
+        }
     }
 }
