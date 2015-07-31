@@ -8,7 +8,7 @@
 <h2>Объявления</h2>
 <div class="dl-horizontal">
     <form>
-        <div class="col-md-4 col-md-offset-1">
+        <div class="col-md-4 ">
             <div class="input-group">
                 <input type="text" class="form-control" value="@ViewContext.HttpContext.Request.Params.Get("search")" name="search" placeholder="Искать...">
                 <span class="input-group-btn">
@@ -24,6 +24,10 @@
         foreach (var deal in Model)
         {
             Html.RenderPartial("ShowDeal", deal);
+        }
+        if (Model.Count() == 0)
+        {
+            <div class="alert alert-info" role="alert">По вашему запросу ничего не найдено</div>
         }
     }
     <div id="tooltip"></div>
