@@ -29,27 +29,10 @@ namespace Swappy_V2.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                List<DealModel> ldv = new List<DealModel>();
-                if (city != null)
-                {
-                    if (!await CustomValidator.CityValid(city))
-                        ModelState.AddModelError("city", "Введите правильное название города");
-
-                    foreach (DealModel dv in db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Where(x => x.City == city))
-                    {
-                        if (dv.ItemToChange.Title.ContainsA(search))
-                            ldv.Add(dv);
-                    }
-                }
-                else
-                {
-                    foreach (DealModel dv in db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants))
-                    {
-                        if (dv.ItemToChange.Title.ContainsA(search))
-                            ldv.Add(dv);
-                    }
-                }
-                return View(ldv);
+                var res = SearchModule.FindOut(search, ds);
+                var list = res.FullMatch.Concat(res.FullSubstringMatch).Concat(res.IncompleteMatch);
+                var nl = from ob in list select ob.Key as DealModel;
+                return View(nl.ToList());
             }
             return View(ds);
         }

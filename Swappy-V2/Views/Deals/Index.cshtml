@@ -3,14 +3,11 @@
 
 @{
     ViewBag.Title = "Объявления";
-    var City = ViewContext.HttpContext.Request.Params.AllKeys.Contains("city") ? ViewContext.HttpContext.Request.Params.Get("city") : "Уфа";
 }
 
 <h2>Объявления</h2>
 <div class="dl-horizontal">
     <form>
-        <input name="city" type="text" class="form-control col-md-1" value="@City" />
-
         <div class="col-md-4 col-md-offset-1">
             <div class="input-group">
                 <input type="text" class="form-control" value="@ViewContext.HttpContext.Request.Params.Get("search")" name="search" placeholder="Искать...">
@@ -31,18 +28,3 @@
     }
     <div id="tooltip"></div>
 </div>
-
-@section styles {
-    @Styles.Render("~/Content/kladr-css")
-}
-@section scripts {
-    @Scripts.Render("~/bundles/kladr")
-    <script type="text/javascript">
-        $(function () {
-	$('[name="city"]').kladr({
-		type: $.kladr.type.city
-	});
-});
-    </script>
-}
-
