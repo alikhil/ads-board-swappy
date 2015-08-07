@@ -22,7 +22,7 @@ namespace Swappy_V2
         protected void Application_Error(object sender, EventArgs e)
         {
             Exception ex = Server.GetLastError();
-            NLog.LogManager.GetCurrentClassLogger().Error(ex.Message, ex);
+            NLog.LogManager.GetCurrentClassLogger().Error(ex.GetAllMessages());
             //TODO crash report
         }
     }
