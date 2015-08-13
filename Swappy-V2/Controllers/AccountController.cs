@@ -76,16 +76,18 @@ namespace Swappy_V2.Controllers
 
             // Сбои при входе не приводят к блокированию учетной записи
             // Чтобы ошибки при вводе пароля инициировали блокирование учетной записи, замените на shouldLockout: true
+
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user != null && !await UserManager.IsEmailConfirmedAsync(user.Id))
+            {
+                ModelState.AddModelError("", "Неправильный пароль или e-mail.");
+                return View(model);
+            }
+
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    var user = await UserManager.FindByNameAsync(model.Email);
-                    if (!await UserManager.IsEmailConfirmedAsync(user.Id))
-                    {
-                        ModelState.AddModelError("", "Неудачная попытка входа.");
-                        return View(model);
-                    }
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -93,7 +95,7 @@ namespace Swappy_V2.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Неудачная попытка входа.");
+                    ModelState.AddModelError("", "Неправильный пароль или e-mail.");
                     return View(model);
             }
         }
