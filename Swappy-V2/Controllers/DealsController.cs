@@ -288,15 +288,15 @@ namespace Swappy_V2.Controllers
             try
             {
                 deal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == id);
-                // защита от несанкционированного удаления другим пользователем
-                if (deal.AppUserId != ud)
-                {
-                    return RedirectToAction("MyDeals");
-                }
+                // защита от несанкционированного удаления другим пользователем кроме админа ;)
+                if (deal.AppUserId != ud && !User.IsInRole("Admin"))
+                    throw new Exception("Access denied - 403. Попытка удалить чужое объявление");
+                
                 return View(deal);
             }
-            catch
+            catch(Exception e)
             {
+                //TODO: Log exception
                 return RedirectToAction("MyDeals");
             }
         }
@@ -305,10 +305,21 @@ namespace Swappy_V2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var oldVal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == id);
-            db.Items.RemoveRange(oldVal.Variants);
-            db.Deals.Remove(oldVal);
-            db.SaveChanges();
+            try
+            {
+                var oldVal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == id);
+                
+                if (oldVal.AppUserId != User.Identity.GetAppUserId() && !User.IsInRole("Admin"))
+                    throw new Exception("Access denied - 403. Попытка удалить чужое объявление");
+
+                db.Items.RemoveRange(oldVal.Variants);
+                db.Deals.Remove(oldVal);
+                db.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                //TODO: Log exception
+            }
             return RedirectToAction("MyDeals");
         }
     }
