@@ -213,6 +213,7 @@ namespace Swappy_V2.Controllers
 
                     if (file == null || fValid)
                     {
+                        deal.ItemToChange.ImageUrl = oldVal.ItemToChange.ImageUrl;
                         if (fValid)
                         {
                             string ufile = Path.GetFileName(file.FileName);
@@ -221,7 +222,6 @@ namespace Swappy_V2.Controllers
                             deal.ItemToChange.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file);
                         }
 
-                        deal.ItemToChange.ImageUrl = oldVal.ItemToChange.ImageUrl;
                         db.Items.RemoveRange(oldVal.Variants);
                         db.Deals.Remove(oldVal);
 
