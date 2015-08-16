@@ -174,15 +174,15 @@ namespace Swappy_V2.Controllers
             {
                 deal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == id);
                 // защита от несанкционированного редкатирования другим пользователем
-                if (deal.AppUserId != ud)
-                {
-                    return RedirectToAction("MyDeals");
-                }
+                if (deal.AppUserId != ud && !(User.IsInRole("Moderator") || User.IsInRole("Admin")))
+                    throw new Exception("Access denied - 403. Попытка редактировать чужое объявление");
+
                 ViewData["EditDeal"] = true;
                 return View("Create", deal);
             }
-            catch
+            catch(Exception e)
             {
+                //TODO: log Exceptoion
                 return RedirectToAction("MyDeals");
             }
         }
@@ -194,50 +194,65 @@ namespace Swappy_V2.Controllers
             bool fValid = file != null;
             JsonObject res = new JsonObject { Status = "OK", Result = new List<string>() };
             ValidStatus validStatus = ValidStatus.Unknown;
+
             if (fValid)
             {
                 validStatus = CustomValidator.ImageVaild(file);
                 fValid = validStatus == ValidStatus.Valid ? fValid : false;
             }
 
-            if (ModelState.IsValid && (file == null || fValid))
+            if(ModelState.IsValid)
             {
-                if (fValid)
+                try
                 {
-                    string ufile = Path.GetFileName(file.FileName);
-                    string fname = ufile.Substring(ufile.LastIndexOf('.'));
-                    fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
-                    deal.ItemToChange.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file);
+                    //Если объявления не существует - выдаст исключение
+                    var oldVal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == deal.Id);
+                    // Проверка прав доступа
+                    if(User.Identity.GetAppUserId() != oldVal.AppUserId && !(User.IsInRole("Admin") || User.IsInRole("Moderator")))
+                        throw new Exception("Access denied - 403. Попытка редактировать чужое объявление");
+
+                    if (file == null || fValid)
+                    {
+                        if (fValid)
+                        {
+                            string ufile = Path.GetFileName(file.FileName);
+                            string fname = ufile.Substring(ufile.LastIndexOf('.'));
+                            fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
+                            deal.ItemToChange.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file);
+                        }
+
+                        deal.ItemToChange.ImageUrl = oldVal.ItemToChange.ImageUrl;
+                        db.Items.RemoveRange(oldVal.Variants);
+                        db.Deals.Remove(oldVal);
+
+                        deal.AppUserId = oldVal.AppUserId;
+                        deal.City = User.Identity.GetClaim("City");
+                        db.Deals.Add(deal);
+                        db.Items.Add(deal.ItemToChange);
+                        db.Items.AddRange(deal.Variants);
+
+                        db.SaveChanges();
+                        deal.ItemToChange.DealModelId = deal.Id;
+                        foreach (var i in deal.Variants)
+                            i.DealModelId = deal.Id;
+
+                        db.SaveChanges();
+
+                    }
                 }
-
-                DealModel oldVal = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Single(x => x.Id == deal.Id);
-                deal.ItemToChange.ImageUrl = oldVal.ItemToChange.ImageUrl;
-                db.Items.RemoveRange(oldVal.Variants);
-                db.Deals.Remove(oldVal);
-
-                deal.AppUserId = User.Identity.GetAppUserId();
-                deal.City = User.Identity.GetClaim("City");
-                db.Deals.Add(deal);
-                db.Items.Add(deal.ItemToChange);
-                db.Items.AddRange(deal.Variants);
-
-                db.SaveChanges();
-                deal.ItemToChange.DealModelId = deal.Id;
-                foreach (var i in deal.Variants)
-                    i.DealModelId = deal.Id;
-
-                db.SaveChanges();
-
+                catch(Exception e)
+                {
+                    //TODO: log exception
+                }
                 return RedirectToAction("MyDeals");
+
             }
-            else
+           
+            if (!fValid && file != null)
             {
-                if (file != null)
-                {
-                    List<string> errors = GenerateErrors(validStatus);
-                    foreach (var error in errors)
-                        ModelState.AddModelError("file", error);
-                }
+                List<string> errors = GenerateErrors(validStatus);
+                foreach (var error in errors)
+                    ModelState.AddModelError("file", error);
             }
 
             return View();
