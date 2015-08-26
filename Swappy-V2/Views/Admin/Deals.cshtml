@@ -7,13 +7,17 @@
 <h2>Управление объявлениями</h2>
 
 <div class="dl-horizontal">
-    @if (Model != null)
+    @if (Model != null && Model.Count() != 0)
     {
         foreach (DealModel deal in Model)
         {
             Html.RenderPartial("ShowDeal", deal, new ViewDataDictionary { { "Manage", true } });
 
         }
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">Нет объявлений</div>
     }
     <div id="tooltip"></div>
 </div>
