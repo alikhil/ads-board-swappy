@@ -25,5 +25,26 @@ namespace Swappy_V2.Controllers
             var list = dls.ToList();
             return View(list);
         }
+        public ActionResult Users()
+        {
+            var users = db.Users.ToList();
+            return View(users);
+        }
+        public ActionResult ShowUser(int? id)
+        {
+            if (id.HasValue)
+            {
+                var users = db.Users.ToList();
+                var user = users.Single(x => x.Id == id);
+                var deals = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Where(x => x.AppUserId == id);
+                ViewBag.Deals = deals.ToList();
+                return View(user);
+            }
+            else
+            {
+                //TODO: показать ошибку, что бзер не найден
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
