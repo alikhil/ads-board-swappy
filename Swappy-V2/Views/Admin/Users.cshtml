@@ -1,0 +1,37 @@
+﻿@model List<Swappy_V2.Models.AppUserModel>
+@{
+    ViewBag.Title = "Пользователи";
+}
+
+<table class="table">
+    <caption>
+        Список всех пользователей
+    </caption>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Имя Фамилия</th>
+            <th>Город</th>
+            <th>Email</th>
+            <th>Профиль</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if(Model != null && Model.Count > 0)
+            {
+                foreach (var user in Model)
+                {
+                    <tr>
+                        <th scope="row">@user.Id</th>
+                        <td>@user.Name @user.Surname</td>
+                        <td>@user.City</td>
+                        <td>@user.Email</td>
+                        <td>@Html.ActionLink("тык", "ShowUser",new { id = user.Id })</td>
+                    </tr>
+                }
+            }   
+        }
+    </tbody>
+</table>
+
