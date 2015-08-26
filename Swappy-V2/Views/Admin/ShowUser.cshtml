@@ -1,0 +1,74 @@
+﻿@using Swappy_V2.Models;
+@model AppUserModel
+@{
+    ViewBag.Title = "Пользователи";
+}
+
+<h3>Управление пользователем</h3>
+
+@if (Model != null)
+{
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Surname, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="control-label col-md-2">
+                    @Model.Surname
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="control-label col-md-2">
+                    @Model.Name
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="control-label col-md-2">
+                    @Model.Email
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="control-label col-md-2">
+                    @Model.PhoneNumber
+                </p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="control-label col-md-2">
+                    @Model.City
+                </p>
+            </div>
+        </div>
+        </div>
+}
+<br />
+<h3>
+    Объявления пользователя
+</h3>
+<div class="dl-horizontal">
+    @if (ViewBag.Deals != null && ViewBag.Deals.Count != 0)
+    {
+        foreach (DealModel deal in ViewBag.Deals)
+        {
+            Html.RenderPartial("ShowDeal", deal, new ViewDataDictionary { { "Manage", true } });
+
+        }
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">У данного пользователя нет объявлений</div>
+    }
+    <div id="tooltip"></div>
+</div>
