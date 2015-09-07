@@ -12,11 +12,17 @@ namespace Swappy_V2.Models
     {
         public int Id { get; set; }
         public int AppUserId { get; set; }
-        public int? ItemToChangeId { get; set; }
 
         [Required]
-        [Display(Name = "Вещь которую вы хотите обменять")]
-        public ItemModel ItemToChange { get; set; }
+        [Display(Name = "Название")]
+        [MaxLength(50, ErrorMessage = "{0} должно иметь не более {1} символов")]
+        public string Title { get; set; }
+
+        [Display(Name = "Примечание")]
+        [MaxLength(300, ErrorMessage = "{0} должно иметь не более {1} символов")]
+        public string Description { get; set; }
+
+        public string ImageUrl { get; set; }
 
         [Required]
         [Display(Name = "Варианты обмена")]
@@ -31,7 +37,7 @@ namespace Swappy_V2.Models
 
         public string SearchBy()
         {
-            return this.ItemToChange.Title;
+            return this.Title;
         }
     }
 }
