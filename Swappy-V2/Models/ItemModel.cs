@@ -20,7 +20,6 @@ namespace Swappy_V2.Models
 
         public string ImageUrl { get; set; }
 
-        public int? DealModelId { get; set; }
         public DealModel DealModel { get; set; }
     }
 }
