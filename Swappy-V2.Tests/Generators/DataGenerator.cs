@@ -23,6 +23,8 @@ namespace Swappy_V2.Tests.Generators
             users = new List<AppUserModel>();
             deals = new List<DealModel>();
             items = new List<ItemModel>();
+            int itemId = 0;
+            int dealId = 0;
             for(int i = 0;i < userCnt;i++)
             {
                 var user = new AppUserModel()
@@ -35,9 +37,15 @@ namespace Swappy_V2.Tests.Generators
                     PhoneNumber = GeneratePhoneNumber()
                 };
                 users.Add(user);
-                int itemId = 0;
                 for (int j = 0; j < dealCntPerUser; j++)
                 {
+                    var deal = new DealModel()
+                    {
+                        AnotherVariants = true,
+                        Id = dealId++,
+                        City = users[i].City,
+                        AppUserId = i,
+                    };
                     var itemes = new List<ItemModel>();
                     for(int k = 0;k < itemCntPerDeal;k++)
                     {
@@ -46,30 +54,13 @@ namespace Swappy_V2.Tests.Generators
                             Description = Descriptions[rand.Next(Descriptions.Length)],
                             Id = itemId++,
                             ImageUrl = "",
-                            DealModelId = j
+                            DealModel = deal
                         });
                     }
-                    var changeItem = new ItemModel() 
-                    {
-                        Title = ItemTitles[rand.Next(ItemTitles.Length)],
-                        Description = Descriptions[rand.Next(Descriptions.Length)],
-                        Id = itemId++,
-                        DealModelId = j, 
-                        ImageUrl = ""
-                    };
-                    var deal = new DealModel()
-                    {
-                        Variants = itemes,
-                        ItemToChange = changeItem,
-                        AnotherVariants = true,
-                        Id = j,
-                        City = users[i].City,
-                        AppUserId = i,
-                        ItemToChangeId = changeItem.Id
-                    };
-                    deal.ItemToChange.DealModel = deal;
-                    items.AddRange(itemes);
-                    items.Add(changeItem);
+                    
+                    deal.Title = ItemTitles[rand.Next(ItemTitles.Length)];
+                    deal.Description = Descriptions[rand.Next(Descriptions.Length)];
+                    deal.Variants = itemes;
                     deals.Add(deal);
                 }
 
