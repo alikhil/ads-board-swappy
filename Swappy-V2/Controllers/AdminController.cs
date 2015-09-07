@@ -13,30 +13,49 @@ namespace Swappy_V2.Controllers
     [AdminFilter]
     public class AdminController : Controller
     {
-        DataContext db = new DataContext();
-        // GET: Admin
+        IRepository<DealModel> DealsRepo;
+        IRepository<AppUserModel> UsersRepo;
+        IPathProvider ServerPathProvider;
+        /// <summary>
+        /// Класс для помощи мокания статик и прочих функций, которые трудно отмокать
+        /// </summary>
+        Mockable MockHelper;
+        public AdminController()
+        {
+            DealsRepo = new DealsRepository();
+            UsersRepo = new UsersRepository();
+            MockHelper = new MockingHelper();
+            ServerPathProvider = new ServerPathProvider();
+        }
+        public AdminController(IRepository<DealModel> dealRepo, IRepository<AppUserModel> usersRepo = null, Mockable helper = null, IPathProvider pp = null)
+        {
+            DealsRepo = dealRepo;
+            UsersRepo = usersRepo == null ? new UsersRepository() : usersRepo;
+            MockHelper = helper == null ? new MockingHelper() : helper;
+            ServerPathProvider = pp == null ? new ServerPathProvider() : pp;
+
+        }
         public ActionResult Index()
         {
             return View();
         }
         public ActionResult Deals()
         {
-            var dls = db.Deals.Include(x => x.Variants);
-            var list = dls.ToList();
+            var list = DealsRepo.GetList();
             return View(list);
         }
         public ActionResult Users()
         {
-            var users = db.Users.ToList();
+            var users = UsersRepo.GetList();
             return View(users);
         }
         public ActionResult ShowUser(int? id)
         {
             if (id.HasValue)
             {
-                var users = db.Users.ToList();
+                var users = UsersRepo.GetList();
                 var user = users.Single(x => x.Id == id);
-                var deals = db.Deals.Include(x => x.Variants).Where(x => x.AppUserId == id);
+                var deals = DealsRepo.GetList().Where(x => x.AppUserId == id);
                 ViewBag.Deals = deals.ToList();
                 return View(user);
             }
