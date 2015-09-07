@@ -15,6 +15,7 @@ namespace Swappy_V2.Models
         List<Type> GetList();
         Type Get(int id);
         void Create(Type item);
+        void AddRange(IEnumerable<Type> forAdd);
         void Update(Type item);
         void Delete(int id);
         void Save();
@@ -30,8 +31,13 @@ namespace Swappy_V2.Models
         DataContext db = new DataContext();
         public List<DealModel> GetList()
         {
-            var list = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants);
+            var list = db.Deals.Include(x => x.Variants);
             return list.ToList();
+        }
+
+        public void AddRange(IEnumerable<DealModel> forAdd)
+        {
+            db.Deals.AddRange(forAdd);
         }
 
         public void Create(DealModel deal)
@@ -80,33 +86,39 @@ namespace Swappy_V2.Models
     }
 
     /// <summary>
-    /// Обертка для работы с таблицей объявлений
+    /// Обертка для работы с таблицей юзеров
     /// </summary>
-    public class ItemsRepository : IRepository<ItemModel>
+    public class UsersRepository : IRepository<AppUserModel>
     {
         private bool disposed = false;
 
         DataContext db = new DataContext();
-        public List<ItemModel> GetList()
+        public List<AppUserModel> GetList()
         {
-            var list = db.Items;
+            var list = db.Users;
             return list.ToList();
         }
 
-        public void Create(ItemModel item)
+        public void AddRange(IEnumerable<AppUserModel> forAdd)
         {
-            db.Items.Add(item);
+            db.Users.AddRange(forAdd);
         }
 
-        public void Update(ItemModel item)
+        public void Create(AppUserModel user)
         {
-            db.Entry(item).State = EntityState.Modified;
+            db.Users.Add(user);
+        }
+
+        public void Update(AppUserModel user)
+        {
+            db.Users.Attach(user);
+            db.Entry(user).State = EntityState.Modified;
         }
 
         public void Delete(int id)
         {
-            var item = db.Items.Find(id);
-            db.Items.Remove(item);
+            var user = db.Users.Find(id);
+            db.Users.Remove(user);
         }
 
         public void Save()
@@ -114,9 +126,9 @@ namespace Swappy_V2.Models
             db.SaveChanges();
         }
 
-        public ItemModel Get(int id)
+        public AppUserModel Get(int id)
         {
-            return db.Items.Find(id);
+            return db.Users.Find(id);
         }
 
         public virtual void Dispose(bool disposing)
