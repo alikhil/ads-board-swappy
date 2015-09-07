@@ -2,7 +2,7 @@
 @using Swappy_V2.Classes;
 @model DealModel
 @{
-    var url = !string.IsNullOrEmpty(Model.ItemToChange.ImageUrl) ? Model.ItemToChange.ImageUrl : AppConstants.NoImagePath;
+    var url = !string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : AppConstants.NoImagePath;
     var edit = ViewData["Edit"] != null && (bool)ViewData["Edit"] == true;
     var manage = ViewData["Manage"] != null && (bool)ViewData["Manage"] == true;
     }
@@ -26,14 +26,14 @@
 
                 @if (edit)
                 {
-                    <h4><b id="ItemToChangeTitle" class="inline pull-left">@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
+                    <h4><b id="ItemToChangeTitle" class="inline pull-left">@Html.DisplayFor(model => model.Title)</b></h4>
                     <button class="btn btn-xs edit-button inline" data-toggle="modal" data-target="#mainInfoModal"><span class="glyphicon glyphicon-pencil" /></button>
-                    <p id="ItemToChangeDescription">@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+                    <p id="ItemToChangeDescription">@Html.DisplayFor(model => model.Description)</p>
                 }
                 else if (manage)
                 {
                     <div class="inline">
-                        <h4><b>@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
+                        <h4><b>@Html.DisplayFor(model => model.Title)</b></h4>
                     </div>
 
                     <div class="btn-group inline">
@@ -51,8 +51,8 @@
                 }
                 else
                 {
-                    <h4><b>@Html.DisplayFor(model => model.ItemToChange.Title)</b></h4>
-                    <p>@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+                    <h4><b>@Html.DisplayFor(model => model.Title)</b></h4>
+                    <p>@Html.DisplayFor(model => model.Description)</p>
                 }
 
                 @if (Model.AnotherVariants)

@@ -2,8 +2,8 @@
 
 <div id="tooltip"></div>
 @{
-    ViewBag.Title = Model.ItemToChange.Title;
-    var imagePath = string.IsNullOrEmpty(Model.ItemToChange.ImageUrl) ? Swappy_V2.Classes.AppConstants.NoImagePath : Model.ItemToChange.ImageUrl;
+    ViewBag.Title = Model.Title;
+    var imagePath = string.IsNullOrEmpty(Model.ImageUrl) ? Swappy_V2.Classes.AppConstants.NoImagePath : Model.ImageUrl;
 }
 @if (Model != null)
 {
@@ -13,7 +13,7 @@
 
         <dl class="dl-horizontal">
             <dt class="wide-dt">
-                <h2 class="text-center">@Model.ItemToChange.Title</h2>
+                <h2 class="text-center">@Model.Title</h2>
             </dt>
             <dd></dd>
             <dt class="img-carcas wide-dt">
@@ -21,8 +21,8 @@
             </dt>
             <dd class="float-righter">
                 <br />
-                <p> <b>@Html.DisplayNameFor(model => model.ItemToChange.Description)</b></p>
-                <p>@Html.DisplayFor(model => model.ItemToChange.Description)</p>
+                <p> <b>@Html.DisplayNameFor(model => model.Description)</b></p>
+                <p>@Html.DisplayFor(model => model.Description)</p>
 
                 <p><b>@Html.DisplayNameFor(model => model.Variants)</b> </p>
                 <p>

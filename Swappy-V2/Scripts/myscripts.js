@@ -3,9 +3,9 @@
 */
 
 $(function () {
-    $title = $("#ItemToChange_Title").val();
-    $description = $("#ItemToChange_Description").val();
-    $link = $("#ItemToChange_ImageUrl").val();
+    $title = $("#Title").val();
+    $description = $("Description").val();
+    $link = $("#ImageUrl").val();
     $checked = $("#AnotherVariants").val();
 
     $("#main-title-text").val($title);
@@ -50,9 +50,9 @@ $(function () {
             success: function (result) {
                 if (result == "ok") {
                     $("#main-modal-errors").html("").hide();
-                    $("#ItemToChange_Title").val($title);
-                    $("#ItemToChange_Description").val($description);
-                    $("#ItemToChange_ImageUrl").val($link);
+                    $("#Title").val($title);
+                    $("#Description").val($description);
+                    $("#ImageUrl").val($link);
                     $("#AnotherVariants").val($checked);
 
                     $("#ItemToChangeTitle").text($title);

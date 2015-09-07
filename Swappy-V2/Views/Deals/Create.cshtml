@@ -32,13 +32,12 @@
             <input type="file" id="file" name="file" />
         </div>
        
-        @Html.HiddenFor(model => model.ItemToChange.Id)
 
-        @Html.HiddenFor(model => model.ItemToChange.Title, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(model => model.ItemToChange.Title, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
 
-        @Html.HiddenFor(model => model.ItemToChange.Description, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(model => model.ItemToChange.Description, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
 
         <div id="tooltip"></div>
 
