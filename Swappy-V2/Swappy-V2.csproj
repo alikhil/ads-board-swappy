@@ -39,6 +39,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -49,6 +55,9 @@
     </Reference>
     <Reference Include="NLog.Web">
       <HintPath>..\packages\NLog.Web.2.0.0.0\lib\net35\NLog.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz">
+      <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="SendGrid.SmtpApi">
       <HintPath>..\packages\SendGrid.SmtpApi.1.3.1\lib\net40\SendGrid.SmtpApi.dll</HintPath>
@@ -171,46 +180,113 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Classes\AdminFilter.cs" />
+    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\CustomValidator.cs" />
+    <Compile Include="Classes\ExceptionExtensions.cs" />
+    <Compile Include="Classes\IdentityUserExtensions.cs" />
+    <Compile Include="Classes\IEnumerableExtentions.cs" />
+    <Compile Include="Classes\JobScheduler.cs" />
+    <Compile Include="Classes\JsonObject.cs" />
+    <Compile Include="Classes\Util.cs" />
+    <Compile Include="Classes\ValidationUIHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\DealsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Classes\MockingHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AppUserModel.cs" />
+    <Compile Include="Models\DataContext.cs" />
+    <Compile Include="Models\DealModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ItemModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Repository.cs" />
+    <Compile Include="Modules\EmailModule.cs" />
+    <Compile Include="Modules\KladrModule\KladrClient.cs" />
+    <Compile Include="Modules\KladrModule\KladrResponse.cs" />
+    <Compile Include="Modules\KladrModule\Types\SearchContext.cs" />
+    <Compile Include="Modules\KladrModule\Types\SearchParent.cs" />
+    <Compile Include="Modules\KladrModule\Types\SearchResult.cs" />
+    <Compile Include="Modules\SearchModule\Searchable.cs" />
+    <Compile Include="Modules\SearchModule\SearchModule.cs" />
+    <Compile Include="Modules\SearchModule\SearchRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="favicon.ico" />
+    <Content Include="favicon.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\swappy_logo.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="job_scheduling_data_2_0.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\Swappy V2.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\kladr\examples\all.html" />
+    <Content Include="Scripts\kladr\examples\controller.html" />
+    <Content Include="Scripts\kladr\examples\css\all.css" />
+    <Content Include="Scripts\kladr\examples\css\controller.css" />
+    <Content Include="Scripts\kladr\examples\css\form.css" />
+    <Content Include="Scripts\kladr\examples\css\form_with_map.css" />
+    <Content Include="Scripts\kladr\examples\css\one_string.css" />
+    <Content Include="Scripts\kladr\examples\css\simple.css" />
+    <Content Include="Scripts\kladr\examples\css\type_code.css" />
+    <Content Include="Scripts\kladr\examples\form.html" />
+    <Content Include="Scripts\kladr\examples\form_with_map.html" />
+    <Content Include="Scripts\kladr\examples\js\all.js" />
+    <Content Include="Scripts\kladr\examples\js\controller.js" />
+    <Content Include="Scripts\kladr\examples\js\form.js" />
+    <Content Include="Scripts\kladr\examples\js\form_with_map.js" />
+    <Content Include="Scripts\kladr\examples\js\lib\jquery-1.11.1.min.js" />
+    <Content Include="Scripts\kladr\examples\js\one_string.js" />
+    <Content Include="Scripts\kladr\examples\js\simple.js" />
+    <Content Include="Scripts\kladr\examples\js\type_code.js" />
+    <Content Include="Scripts\kladr\examples\one_string.html" />
+    <Content Include="Scripts\kladr\examples\simple.html" />
+    <Content Include="Scripts\kladr\examples\type_code.html" />
+    <Content Include="Scripts\kladr\gulpfile.js" />
+    <Content Include="Scripts\kladr\images\spinner.png" />
+    <Content Include="Scripts\kladr\jquery.kladr.min.css" />
+    <Content Include="Scripts\kladr\jquery.kladr.min.js" />
+    <Content Include="Scripts\kladr\kladr\css\style.css" />
+    <Content Include="Scripts\kladr\kladr\js\core.js" />
+    <Content Include="Scripts\kladr\kladr\js\kladr.js" />
+    <Content Include="Scripts\kladr\kladr\js\kladr_zip.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\myscripts.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -221,8 +297,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
@@ -237,14 +311,27 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Scripts\kladr\bower.json" />
+    <Content Include="Scripts\kladr\examples\js\lib\jquery-1.11.1.min.map" />
+    <Content Include="Scripts\kladr\examples\README.md" />
+    <Content Include="Scripts\kladr\kladr\js\README.md" />
+    <Content Include="Scripts\kladr\package.json" />
+    <Content Include="Views\Deals\Create.cshtml" />
+    <Content Include="Views\Deals\Delete.cshtml" />
+    <Content Include="Views\Deals\Index.cshtml" />
+    <Content Include="Views\Deals\Info.cshtml" />
+    <Content Include="Views\Deals\MyDeals.cshtml" />
+    <Content Include="Views\Account\ConfirmEmailBegin.cshtml" />
+    <Content Include="Views\Shared\ShowDeal.cshtml" />
+    <Content Include="Views\Shared\ShowItem.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\Deals.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\ShowUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
