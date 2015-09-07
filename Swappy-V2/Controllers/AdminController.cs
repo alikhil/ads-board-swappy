@@ -21,7 +21,7 @@ namespace Swappy_V2.Controllers
         }
         public ActionResult Deals()
         {
-            var dls = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants);
+            var dls = db.Deals.Include(x => x.Variants);
             var list = dls.ToList();
             return View(list);
         }
@@ -36,7 +36,7 @@ namespace Swappy_V2.Controllers
             {
                 var users = db.Users.ToList();
                 var user = users.Single(x => x.Id == id);
-                var deals = db.Deals.Include(x => x.ItemToChange).Include(x => x.Variants).Where(x => x.AppUserId == id);
+                var deals = db.Deals.Include(x => x.Variants).Where(x => x.AppUserId == id);
                 ViewBag.Deals = deals.ToList();
                 return View(user);
             }
