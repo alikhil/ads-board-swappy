@@ -14,11 +14,18 @@ using Swappy_V2.Models;
 using Swappy_V2.Controllers;
 using Swappy_V2.Classes;
 using System.Security.Claims;
+using Swappy_V2.Tests.Generators;
 namespace Swappy_V2.Tests.Controllers
 {
     [TestClass]
     public class DealsControllerTest
     {
+        FakesGenerator MoqGenerator;
+        public DealsControllerTest()
+        {
+            MoqGenerator = new FakesGenerator();
+        }
+
         [TestMethod]
         public void DealsIndexSearching_FindResults()
         {
@@ -107,7 +114,7 @@ namespace Swappy_V2.Tests.Controllers
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Create(deal, null) as ViewResult;
@@ -120,7 +127,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetNotValidFile();
+            var fileMoq = MoqGenerator.GetNotValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -133,7 +140,7 @@ namespace Swappy_V2.Tests.Controllers
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Create(deal, fileMoq.Object) as ViewResult;
@@ -148,7 +155,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetNotValidFile();
+            var fileMoq = MoqGenerator.GetNotValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -160,8 +167,8 @@ namespace Swappy_V2.Tests.Controllers
             dealMoq.Setup(x => x.GetList()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = deals[0];
-            
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Create(deal, fileMoq.Object) as ViewResult;
@@ -175,7 +182,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetValidFile();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -188,7 +195,7 @@ namespace Swappy_V2.Tests.Controllers
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
             
             //Act
             ViewResult result = dealsController.Create(deal, fileMoq.Object) as ViewResult;
@@ -204,10 +211,10 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
 
-            var fileMoq = GetValidFile();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             //инициализация мока помощника
-            var moqHelper = GetMoqHelper();
+            var moqHelper = MoqGenerator.GetMoqHelper();
 
             //списки для тестовых данных
             List<ItemModel> items = new List<ItemModel>();
@@ -222,10 +229,10 @@ namespace Swappy_V2.Tests.Controllers
             dealMoq.Setup(x => x.GetList()).Returns(deals);
             
             // мок для подмены путей сервера
-            var pathProviderMoq = GetServerPathProvider();
+            var pathProviderMoq = MoqGenerator.GetServerPathProvider();
             
             //подделка-мок для User.Identity
-            var controllerContext = GetControllerWithContextUserIdentity();
+            var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
             
             //Создание самого контроллера
             DealsController dealsController = new DealsController(dealMoq.Object, pp: pathProviderMoq.Object)
@@ -237,7 +244,7 @@ namespace Swappy_V2.Tests.Controllers
             var deal = deals[0];
             //Генерирум ошибки валидации для модели, потому что фунция 
             //в контроллере этого не сделат из-за того что функция вызвана не из представления
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
            
             //Act
             //вызов функции
@@ -264,8 +271,8 @@ namespace Swappy_V2.Tests.Controllers
 
             dealMoq.Setup(x => x.GetList()).Returns(deals);
 
-            var fileMoq = GetValidFile();
-            var pathProvider = GetServerPathProvider();
+            var fileMoq = MoqGenerator.GetValidFile();
+            var pathProvider = MoqGenerator.GetServerPathProvider();
 
             DealsController dealsController = new DealsController(dealMoq.Object, pp: pathProvider.Object);
             //Act
@@ -291,8 +298,8 @@ namespace Swappy_V2.Tests.Controllers
 
             dealMoq.Setup(x => x.GetList()).Returns(deals);
 
-            var fileMoq = GetNotValidFile();
-            var pathProvider = GetServerPathProvider();
+            var fileMoq = MoqGenerator.GetNotValidFile();
+            var pathProvider = MoqGenerator.GetServerPathProvider();
 
             DealsController dealsController = new DealsController(dealMoq.Object, pp: pathProvider.Object);
             //Act
@@ -322,7 +329,7 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             ItemModel item = new ItemModel();
             DealsController dealsController = new DealsController();
-            dealsController = GenerateModelErrors<ItemModel>(dealsController, item) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<ItemModel>(dealsController, item) as DealsController;
 
             //Act
             var result = dealsController.CheckItemValid(item);
@@ -341,7 +348,7 @@ namespace Swappy_V2.Tests.Controllers
                 Description = "True discr"
             };
             DealsController dealsController = new DealsController();
-            dealsController = GenerateModelErrors<ItemModel>(dealsController, item) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<ItemModel>(dealsController, item) as DealsController;
 
             //Act
             var result = dealsController.CheckItemValid(item);
@@ -356,7 +363,7 @@ namespace Swappy_V2.Tests.Controllers
             var dealMoq = new Mock<IRepository<DealModel>>();
             var dealCntPerUser = 2;
             //инициализация мока помощника
-            var moqHelper = GetMoqHelper();
+            var moqHelper = MoqGenerator.GetMoqHelper();
 
             //списки для тестовых данных
             List<ItemModel> items = new List<ItemModel>();
@@ -371,7 +378,7 @@ namespace Swappy_V2.Tests.Controllers
             dealMoq.Setup(x => x.GetList()).Returns(deals);
 
             //подделка-мок для User.Identity
-            var controllerContext = GetControllerWithContextUserIdentity();
+            var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
 
             //Создание самого контроллера
             DealsController dealsController = new DealsController(dealMoq.Object)
@@ -397,7 +404,7 @@ namespace Swappy_V2.Tests.Controllers
             var dealMoq = new Mock<IRepository<DealModel>>();
 
             //инициализация мока помощника
-            var moqHelper = GetMoqHelper();
+            var moqHelper = MoqGenerator.GetMoqHelper();
 
             //списки для тестовых данных
             List<ItemModel> items = new List<ItemModel>();
@@ -412,7 +419,7 @@ namespace Swappy_V2.Tests.Controllers
             dealMoq.Setup(x => x.GetList()).Returns(deals);
 
             //подделка-мок для User.Identity
-            var controllerContext = GetControllerWithContextUserIdentity();
+            var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
 
             //Создание самого контроллера
             DealsController dealsController = new DealsController(dealMoq.Object)
@@ -437,7 +444,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetNotValidFile();
+            var fileMoq = MoqGenerator.GetNotValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -450,7 +457,7 @@ namespace Swappy_V2.Tests.Controllers
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Edit(deal, fileMoq.Object) as ViewResult;
@@ -460,7 +467,6 @@ namespace Swappy_V2.Tests.Controllers
             Assert.IsFalse(dealsController.ModelState.IsValid);
 
         }
-
 
         [TestMethod]
         public void DealsEditPostWithoutFile_NotValid()
@@ -479,7 +485,7 @@ namespace Swappy_V2.Tests.Controllers
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Edit(deal, null) as ViewResult;
@@ -492,7 +498,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetNotValidFile();
+            var fileMoq = MoqGenerator.GetNotValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -502,14 +508,14 @@ namespace Swappy_V2.Tests.Controllers
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
             dealMoq.Setup(x => x.GetList()).Returns(deals);
-            var userMoq = GetControllerWithContextUserIdentity();
+            var userMoq = MoqGenerator.GetControllerWithContextUserIdentity();
             DealsController dealsController = new DealsController(dealMoq.Object)
             {
                 ControllerContext = userMoq.Object
             };
             var deal = deals[0];
 
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             var result = dealsController.Edit(deal, fileMoq.Object) as ViewResult;
@@ -523,7 +529,7 @@ namespace Swappy_V2.Tests.Controllers
         {
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
-            var fileMoq = GetValidFile();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -536,7 +542,7 @@ namespace Swappy_V2.Tests.Controllers
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             ViewResult result = dealsController.Edit(deal, fileMoq.Object) as ViewResult;
@@ -552,10 +558,10 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
 
-            var fileMoq = GetValidFile();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             //инициализация мока помощника
-            var moqHelper = GetMoqHelper();
+            var moqHelper = MoqGenerator.GetMoqHelper();
 
             //списки для тестовых данных
             List<ItemModel> items = new List<ItemModel>();
@@ -570,10 +576,10 @@ namespace Swappy_V2.Tests.Controllers
             dealMoq.Setup(x => x.GetList()).Returns(deals);
 
             // мок для подмены путей сервера
-            var pathProviderMoq = GetServerPathProvider();
+            var pathProviderMoq = MoqGenerator.GetServerPathProvider();
 
             //подделка-мок для User.Identity
-            var controllerContext = GetControllerWithContextUserIdentity();
+            var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
 
             //Создание самого контроллера
             DealsController dealsController = new DealsController(dealMoq.Object, pp: pathProviderMoq.Object)
@@ -585,7 +591,7 @@ namespace Swappy_V2.Tests.Controllers
             var deal = deals[0];
             //Генерирум ошибки валидации для модели, потому что фунция 
             //в контроллере этого не сделат из-за того что функция вызвана не из представления
-            dealsController = GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
+            dealsController = MoqGenerator.GenerateModelErrors<DealModel>(dealsController, deal) as DealsController;
 
             //Act
             //вызов функции
@@ -602,7 +608,7 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
             var userMoq = new Mock<IRepository<AppUserModel>>();
-            var fileMoq = GetValidFile();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -634,8 +640,8 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
             var userMoq = new Mock<IRepository<AppUserModel>>();
-            var mockingHelper = GetMoqHelper(1);
-            var fileMoq = GetValidFile();
+            var mockingHelper = MoqGenerator.GetMoqHelper(1);
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -649,7 +655,7 @@ namespace Swappy_V2.Tests.Controllers
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object){
-                ControllerContext = GetControllerWithContextUserIdentity().Object
+                ControllerContext = MoqGenerator.GetControllerWithContextUserIdentity().Object
             };
             var deal = deals[0];
             //Act
@@ -666,8 +672,8 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
             var userMoq = new Mock<IRepository<AppUserModel>>();
-            var mockingHelper = GetMoqHelper();
-            var fileMoq = GetValidFile();
+            var mockingHelper = MoqGenerator.GetMoqHelper();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -682,7 +688,7 @@ namespace Swappy_V2.Tests.Controllers
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
-                ControllerContext = GetControllerWithContextUserIdentity().Object
+                ControllerContext = MoqGenerator.GetControllerWithContextUserIdentity().Object
             };
             var deal = deals[0];
             //Act
@@ -699,8 +705,8 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
             var userMoq = new Mock<IRepository<AppUserModel>>();
-            var mockingHelper = GetMoqHelper(1);
-            var fileMoq = GetValidFile();
+            var mockingHelper = MoqGenerator.GetMoqHelper(1);
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -715,7 +721,7 @@ namespace Swappy_V2.Tests.Controllers
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
-                ControllerContext = GetControllerWithContextUserIdentity().Object
+                ControllerContext = MoqGenerator.GetControllerWithContextUserIdentity().Object
             };
             var deal = deals[0];
             //Act
@@ -732,8 +738,8 @@ namespace Swappy_V2.Tests.Controllers
             //Arrange
             var dealMoq = new Mock<IRepository<DealModel>>();
             var userMoq = new Mock<IRepository<AppUserModel>>();
-            var mockingHelper = GetMoqHelper();
-            var fileMoq = GetValidFile();
+            var mockingHelper = MoqGenerator.GetMoqHelper();
+            var fileMoq = MoqGenerator.GetValidFile();
 
             List<ItemModel> items = new List<ItemModel>();
             List<DealModel> deals = new List<DealModel>();
@@ -748,7 +754,7 @@ namespace Swappy_V2.Tests.Controllers
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
-                ControllerContext = GetControllerWithContextUserIdentity().Object
+                ControllerContext = MoqGenerator.GetControllerWithContextUserIdentity().Object
             };
             var deal = deals[0];
             //Act
@@ -762,77 +768,5 @@ namespace Swappy_V2.Tests.Controllers
             Assert.AreEqual(result.RouteValues["action"], "MyDeals");
         }
 
-        #region Вспомогательные функции
-
-        Controller GenerateModelErrors<ModelType>(Controller controller, ModelType model)
-        {
-            var validationContext = new ValidationContext(model, null, null);
-            var validationResults = new List<ValidationResult>();
-            Validator.TryValidateObject(model, validationContext, validationResults);
-            foreach (var validationResult in validationResults)
-            {
-                controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
-            }
-            return controller;
-        }
-
-        Mock<IPathProvider> GetServerPathProvider()
-        {
-            var pathProviderMoq = new Mock<IPathProvider>();
-            pathProviderMoq.Setup(x => x.MapPath(It.IsAny<string>())).Returns(
-                (string path) =>
-                {
-                    return Path.Combine(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2\", path);
-                });
-            return pathProviderMoq;
-        }
-
-        Mock<Mockable> GetMoqHelper(int userId = 0)
-        {
-            var moqHelper = new Mock<Mockable>();
-            moqHelper.Setup(x => x.GetAppUserId(It.IsAny<IIdentity>())).Returns(userId);
-            moqHelper.Setup(x => x.GetClaim(It.IsAny<IIdentity>(), It.IsAny<string>())).
-                Returns((IIdentity id, string p) => { return p; });
-            return moqHelper;
-        }
-
-        Mock<ControllerContext> GetControllerWithContextUserIdentity(string name = "test")
-        {
-            var controllerContext = new Mock<ControllerContext>();
-            var principal = new Moq.Mock<IPrincipal>();
-            principal.SetupGet(x => x.Identity.Name).Returns("test");
-            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            controllerContext.Setup(x => x.HttpContext.User.IsInRole(It.IsAny<string>())).
-                Returns(
-                (string role) 
-                    => {
-                    
-                    return role == "User" ? true : false;
-                });
-            return controllerContext;
-        }
-
-        Mock<HttpPostedFileBase> GetValidFile()
-        {
-            var fileMoq = new Mock<HttpPostedFileBase>();
-            fileMoq.Setup(x => x.FileName).Returns("520.jpg");
-            fileMoq.Setup(x => x.ContentType).Returns("image/jpg");
-            fileMoq.Setup(x => x.ContentLength).Returns(879);
-            fileMoq.Setup(x => x.InputStream).Returns(
-                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2.Tests\TestResourses\520.jpg"))));
-            return fileMoq;
-        }
-
-        Mock<HttpPostedFileBase> GetNotValidFile()
-        {
-            var fileMoq = new Mock<HttpPostedFileBase>();
-            fileMoq.Setup(x => x.FileName).Returns("sum.py");
-            fileMoq.Setup(x => x.ContentType).Returns("python/py");
-            fileMoq.Setup(x => x.ContentLength).Returns(879);
-            fileMoq.Setup(x => x.InputStream).Returns(
-                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2.Tests\TestResourses\sum.py"))));
-            return fileMoq;
-        }
-        #endregion
     }
 }
