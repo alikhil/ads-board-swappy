@@ -41,8 +41,7 @@ namespace Swappy_V2.Controllers
             ServerPathProvider = pp == null ? new ServerPathProvider() : pp;
 
         }
-        DataContext db = new DataContext();
-        // GET: Deals
+        
         public ActionResult Index(string search = null, string city = null)
         {
             var deals = DealsRepo.GetList();
