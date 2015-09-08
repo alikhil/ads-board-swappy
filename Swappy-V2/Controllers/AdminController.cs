@@ -51,10 +51,18 @@ namespace Swappy_V2.Controllers
             if (id.HasValue)
             {
                 var users = UsersRepo.GetList();
-                var user = users.Single(x => x.Id == id);
-                var deals = DealsRepo.GetList().Where(x => x.AppUserId == id);
-                ViewBag.Deals = deals.ToList();
-                return View(user);
+                try
+                {
+                    var user = users.Single(x => x.Id == id.Value);
+                    var deals = DealsRepo.GetList().FindAll(x => x.AppUserId == id);
+                    ViewBag.Deals = deals;
+                    return View(user);
+                }
+                catch (InvalidOperationException)
+                {
+                    //TODO: показать ошибку, что юзер не найден
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
