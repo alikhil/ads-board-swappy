@@ -16,9 +16,6 @@ namespace Swappy_V2.Controllers
         IRepository<DealModel> DealsRepo;
         IRepository<AppUserModel> UsersRepo;
         IPathProvider ServerPathProvider;
-        /// <summary>
-        /// Класс для помощи мокания статик и прочих функций, которые трудно отмокать
-        /// </summary>
         Mockable MockHelper;
         public AdminController()
         {
