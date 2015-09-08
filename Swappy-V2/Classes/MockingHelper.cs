@@ -6,6 +6,9 @@ using System.Security.Principal;
 using System.Web;
 namespace Swappy_V2.Classes
 {
+    /// <summary>
+    /// Класс для помощи мокания статик и прочих функций, которые трудно отмокать
+    /// </summary>
     public class MockingHelper : Mockable
     {
         public int GetAppUserId(IIdentity identity)
