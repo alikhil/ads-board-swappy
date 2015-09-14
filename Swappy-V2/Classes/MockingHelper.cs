@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Security.Principal;
 using System.Web;
+using Microsoft.AspNet.Identity;
+using Swappy_V2.Models;
+
 namespace Swappy_V2.Classes
 {
     /// <summary>
@@ -20,11 +23,23 @@ namespace Swappy_V2.Classes
         {
             return identity.GetClaim(p);
         }
+
+        public string GetUserId(IIdentity identity)
+        {
+            return identity.GetUserId();
+        }
+
+        public object GetSameObject(object obj)
+        {
+            return obj;
+        }
     }
     public interface Mockable
     {
         int GetAppUserId(IIdentity identity);
         string GetClaim(IIdentity identity, string p);
+        string GetUserId(IIdentity identity);
+        object GetSameObject(object obj);
     }
     
     public interface IPathProvider
