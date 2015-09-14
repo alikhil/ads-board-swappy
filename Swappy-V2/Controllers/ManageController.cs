@@ -18,10 +18,17 @@ namespace Swappy_V2.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private DataContext db = new DataContext();
+        IRepository<DealModel> DealsRepo;
+        IRepository<AppUserModel> UsersRepo;
+        IPathProvider ServerPathProvider;
+        Mockable MockHelper;
 
-        public ManageController()
+        public ManageController(IRepository<DealModel> dealRepo = null, IRepository<AppUserModel> usersRepo = null, Mockable helper = null, IPathProvider pp = null)
         {
+            DealsRepo = dealRepo == null ? new DealsRepository() : dealRepo;
+            UsersRepo = usersRepo == null ? new UsersRepository() : usersRepo;
+            MockHelper = helper == null ? new MockingHelper() : helper;
+            ServerPathProvider = pp == null ? new ServerPathProvider() : pp;
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -67,20 +74,20 @@ namespace Swappy_V2.Controllers
                 : message == ManageMessageId.RemovePhoneSuccess ? "Ваш номер телефона удален."
                 : "";
 
-            var userId = User.Identity.GetUserId();
-            var appUserId = User.Identity.GetAppUserId();
-            var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
+            var userId = MockHelper.GetUserId(User.Identity);
+            var appUserId = MockHelper.GetAppUserId(User.Identity);
+            var appUser = UsersRepo.GetList().SingleOrDefault(x => x.Id == appUserId);
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                //TODO : do something with comments
+                //TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
+                //Logins = await UserManager.GetLoginsAsync(userId),
+                //BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
                 City = appUser.City,
                 Name = appUser.Name,
                 PhoneNumber = appUser.PhoneNumber,
                 Surname = appUser.Surname
-                
             };
             return View(model);
         }
@@ -93,15 +100,17 @@ namespace Swappy_V2.Controllers
 
             if (ModelState.IsValid && cityIsValid)
             {
-                var appUserId = User.Identity.GetAppUserId();
-                var appUser = db.Users.SingleOrDefault(x => x.Id == appUserId);
+                var appUserId = MockHelper.GetAppUserId(User.Identity);
+                var users = UsersRepo.GetList();
+                var appUser = users.SingleOrDefault(x => x.Id == appUserId);
+
                 appUser.Name = model.Name;
                 appUser.PhoneNumber = model.PhoneNumber;
                 appUser.Surname = model.Surname;
                 appUser.City = model.City;
-                db.Entry(appUser).State = EntityState.Modified;
-                await db.SaveChangesAsync();
 
+                UsersRepo.Update(appUser);
+                UsersRepo.Save();
                 var user = UserManager.Users.FirstOrDefault(x => x.AppUserId == appUserId);
                 user.City = model.City;
                 user.Surname = model.Surname;
