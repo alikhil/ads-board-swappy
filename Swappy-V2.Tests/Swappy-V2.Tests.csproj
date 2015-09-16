@@ -92,7 +92,6 @@
   <ItemGroup>
     <Compile Include="Controllers\DealsControllerTest.cs" />
     <Compile Include="Controllers\AdminControllerTest.cs" />
-    <Compile Include="Controllers\ManageControllerTest.cs" />
     <Compile Include="Generators\DataGenerator.cs" />
     <Compile Include="Generators\FakesGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
