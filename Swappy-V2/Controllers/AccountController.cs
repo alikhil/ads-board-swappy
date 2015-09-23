@@ -162,16 +162,34 @@ namespace Swappy_V2.Controllers
 
             if (ModelState.IsValid && cityIsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Surname = model.Surname, Name = model.Name, City = model.City, PhoneNumber = model.PhoneNumber };
+                var user = new ApplicationUser 
+                {
+                    UserName = model.Email, 
+                    Email = model.Email, 
+                    Surname = model.Surname, 
+                    Name = model.Name, 
+                    City = model.City, 
+                    PhoneNumber = model.PhoneNumber 
+                };
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     DataContext db = new DataContext();
-                    var appUserModel = new AppUserModel() { City = model.City, Email = model.Email, Name = model.Name, PhoneNumber = model.PhoneNumber, Surname = model.Surname };
+                    var appUserModel = new AppUserModel() 
+                    {
+                        City = model.City, 
+                        Email = model.Email, 
+                        Name = model.Name,
+                        PhoneNumber = model.PhoneNumber,
+                        Surname = model.Surname
+                    };
+
                     db.Users.Add(appUserModel);
                     await db.SaveChangesAsync();
                     user.AppUserId = appUserModel.Id;
                     await UserManager.UpdateAsync(user);
+
                     // Дополнительные сведения о том, как включить подтверждение учетной записи и сброс пароля, см. по адресу: http://go.microsoft.com/fwlink/?LinkID=320771
                     // Отправка сообщения электронной почты с этой ссылкой
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -225,8 +243,6 @@ namespace Swappy_V2.Controllers
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // Дополнительные сведения о том, как включить подтверждение учетной записи и сброс пароля, см. по адресу: http://go.microsoft.com/fwlink/?LinkID=320771
-                // Отправка сообщения электронной почты с этой ссылкой
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
                 await UserManager.SendEmailAsync(user.Id, "Сброс пароля", "Сбросьте ваш пароль, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");

@@ -8,6 +8,9 @@ using System.Globalization;
 using System.IO;
 namespace Swappy_V2.Classes
 {
+    /// <summary>
+    /// Класс для проверки валидности 
+    /// </summary>
     public static class CustomValidator
     {
         public static async Task<bool> CityValid(string city)

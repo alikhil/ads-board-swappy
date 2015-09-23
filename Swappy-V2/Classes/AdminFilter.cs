@@ -7,6 +7,9 @@ using System.Web.Routing;
 
 namespace Swappy_V2.Classes
 {
+    /// <summary>
+    /// Фильтр авторизации админов/модераторов
+    /// </summary>
     public class AdminFilter : AuthorizeAttribute
     {
         private string[] allowedRoles = new string[]{ "Admin", "Moderator"};

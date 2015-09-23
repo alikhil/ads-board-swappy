@@ -6,9 +6,23 @@ using Swappy_V2.Classes;
 
 namespace Swappy_V2.Modules
 {
+    /// <summary>
+    /// Модуль поиска объявлений
+    /// </summary>
     public static class SearchModule
     {
+        /// <summary>
+        /// Минимальная допустимый коэфицент совпадения заголовка объявления
+        /// со строкой поиска
+        /// </summary>
         public static double Fuzzyness = 0.7;
+
+        /// <summary>
+        /// Поиск объявлений
+        /// </summary>
+        /// <param name="request">Строка поиска</param>
+        /// <param name="ar">Список объектов типа Searchable в котором надо искать</param>
+        /// <returns>Результаты поиска</returns>
         public static SearchRequest FindOut(string request, IEnumerable<Searchable> ar)
         {
             SearchRequest req = new SearchRequest { Request = request };

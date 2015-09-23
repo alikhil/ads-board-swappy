@@ -7,7 +7,7 @@ using System.Data.Entity;
 namespace Swappy_V2.Models
 {
     /// <summary>
-    /// Интерфейс обертки для работы с таблицами
+    /// Интерфейс обертки для работы с БД
     /// </summary>
     /// <typeparam name="Type">Тип данных в таблице</typeparam>
     public interface IRepository<Type>

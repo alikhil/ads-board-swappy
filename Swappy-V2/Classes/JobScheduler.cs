@@ -9,6 +9,9 @@ using System.Web;
 
 namespace Swappy_V2.Classes
 {
+    /// <summary>
+    /// Планировщик задач
+    /// </summary>
     public class JobScheduler
     {
         public static void Start()
@@ -31,6 +34,9 @@ namespace Swappy_V2.Classes
             scheduler.ScheduleJob(job, trigger);
         }
     }
+    /// <summary>
+    /// Задача по очистке временных файлов
+    /// </summary>
     public class ClearJob : IJob
     {
         public void Execute(IJobExecutionContext context)

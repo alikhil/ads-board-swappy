@@ -25,10 +25,10 @@ namespace Swappy_V2.Controllers
 
         public ManageController(IRepository<DealModel> dealRepo = null, IRepository<AppUserModel> usersRepo = null, Mockable helper = null, IPathProvider pp = null)
         {
-            DealsRepo = dealRepo == null ? new DealsRepository() : dealRepo;
-            UsersRepo = usersRepo == null ? new UsersRepository() : usersRepo;
-            MockHelper = helper == null ? new MockingHelper() : helper;
-            ServerPathProvider = pp == null ? new ServerPathProvider() : pp;
+            DealsRepo = dealRepo ?? new DealsRepository();
+            UsersRepo = usersRepo ?? new UsersRepository();
+            MockHelper = helper ?? new MockingHelper();
+            ServerPathProvider = pp ?? new ServerPathProvider();
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -103,7 +103,7 @@ namespace Swappy_V2.Controllers
                 var appUserId = MockHelper.GetAppUserId(User.Identity);
                 var users = UsersRepo.GetList();
                 var appUser = users.SingleOrDefault(x => x.Id == appUserId);
-
+                //Обновление профиля в своей таблице
                 appUser.Name = model.Name;
                 appUser.PhoneNumber = model.PhoneNumber;
                 appUser.Surname = model.Surname;
@@ -111,6 +111,9 @@ namespace Swappy_V2.Controllers
 
                 UsersRepo.Update(appUser);
                 UsersRepo.Save();
+                //В таблице юзеров(?Зачем хранить дубликаты?)
+                //TODO: Подумать над этим вопросом
+
                 var user = UserManager.Users.FirstOrDefault(x => x.AppUserId == appUserId);
                 user.City = model.City;
                 user.Surname = model.Surname;

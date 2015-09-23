@@ -36,9 +36,9 @@ namespace Swappy_V2.Controllers
         public DealsController(IRepository<DealModel> dealRepo, IRepository<AppUserModel> usersRepo = null, Mockable helper = null, IPathProvider pp = null)
         {
             DealsRepo = dealRepo;
-            UsersRepo = usersRepo == null ? new UsersRepository() : usersRepo;
-            MockHelper = helper == null ? new MockingHelper() : helper;
-            ServerPathProvider = pp == null ? new ServerPathProvider() : pp;
+            UsersRepo = usersRepo ?? new UsersRepository();
+            MockHelper = helper ?? new MockingHelper();
+            ServerPathProvider = pp ?? new ServerPathProvider();
 
         }
         

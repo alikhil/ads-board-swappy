@@ -10,7 +10,7 @@ using Swappy_V2.Models;
 namespace Swappy_V2.Classes
 {
     /// <summary>
-    /// Класс для помощи мокания статик и прочих функций, которые трудно отмокать
+    /// Класс для помощи подделования статик и прочих функций
     /// </summary>
     public class MockingHelper : Mockable
     {
@@ -34,6 +34,10 @@ namespace Swappy_V2.Classes
             return obj;
         }
     }
+
+    /// <summary>
+    /// Класс для помощи подделования статик и прочих функций, которые трудно отмокать
+    /// </summary>
     public interface Mockable
     {
         int GetAppUserId(IIdentity identity);
@@ -42,6 +46,10 @@ namespace Swappy_V2.Classes
         object GetSameObject(object obj);
     }
     
+    /// <summary>
+    /// Интерфейс для получения пути в дирикторию сайта.
+    /// Вынесен в отдельный интерфейс для удобства тестирования
+    /// </summary>
     public interface IPathProvider
     {
         string MapPath(string path);
