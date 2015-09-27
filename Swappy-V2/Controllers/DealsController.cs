@@ -88,10 +88,17 @@ namespace Swappy_V2.Controllers
                     string fname = ufile.Substring(ufile.LastIndexOf('.'));
                     fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
                     deal.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file, ServerPathProvider);
+                    deal.Images = new List<ImageModel>();
+                    deal.Images.Add(
+                        new ImageModel() 
+                        { 
+                            Deal = deal, 
+                            Url = deal.ImageUrl 
+                        });
                 }
                 deal.AppUserId = MockHelper.GetAppUserId(User.Identity);
                 deal.City = MockHelper.GetClaim(User.Identity, "City");
-
+                
                 foreach (var i in deal.Variants)
                     i.DealModel = deal;
                 DealsRepo.Create(deal);
@@ -234,6 +241,22 @@ namespace Swappy_V2.Controllers
                             string fname = ufile.Substring(ufile.LastIndexOf('.'));
                             fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
                             oldVal.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file, ServerPathProvider);
+                            if (oldVal.Images == null || oldVal.Images.Count == 0)
+                            {
+                                oldVal.Images.Add(
+                                   new ImageModel()
+                                   {
+                                       Deal = oldVal,
+                                       Url = oldVal.ImageUrl
+                                   });
+                            }
+                            else
+                            {
+                                var images = oldVal.Images.ToList();
+                                images[0].Url = oldVal.ImageUrl;
+                                images[0].Deal = oldVal;
+                                oldVal.Images = images;
+                            }
                         }
 
                         oldVal.Variants = deal.Variants;
