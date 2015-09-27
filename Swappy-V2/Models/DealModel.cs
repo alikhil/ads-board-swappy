@@ -35,9 +35,27 @@ namespace Swappy_V2.Models
         [Display(Name="Город")]
         public string City { get; set; }
 
+        public DateTime DealCreated { get; set; }
+
+        public DateTime? DealUpdated { get; set; }
+
+        public DealState State { get; set; }
+
+        public int Price { get; set; }
+
+        public ICollection<ImageModel> Images { get; set; }
+
         public string SearchBy()
         {
             return this.Title;
         }
+    }
+
+    public enum DealState
+    {
+        Public,
+        Hidden,
+        HiddenByAdmin,
+        Deleted
     }
 }
