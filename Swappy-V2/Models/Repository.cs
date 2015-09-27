@@ -31,7 +31,7 @@ namespace Swappy_V2.Models
         DataContext db = new DataContext();
         public List<DealModel> GetList()
         {
-            var list = db.Deals.Include(x => x.Variants);
+            var list = db.Deals.Include(x => x.Variants).Include(x => x.Images);
             return list.ToList();
         }
 
@@ -42,18 +42,21 @@ namespace Swappy_V2.Models
 
         public void Create(DealModel deal)
         {
+            deal.DealCreated = DateTime.UtcNow;
             db.Deals.Add(deal);
         }
 
         public void Update(DealModel deal)
         {
+            deal.DealUpdated = DateTime.UtcNow;
             db.Entry(deal).State = EntityState.Modified;
         }
 
         public void Delete(int id)
         {
             var deal = db.Deals.Find(id);
-            db.Deals.Remove(deal);
+            deal.State = DealState.Deleted;
+            Update(deal);
         }
 
         public void Save()
@@ -63,7 +66,15 @@ namespace Swappy_V2.Models
 
         public DealModel Get(int id)
         {
-            return db.Deals.Find(id);
+            try
+            {
+                return GetList().Single(x => x.Id == id);
+            }
+            catch(Exception e)
+            {
+                //TODO: log exception
+                return null;
+            }
         }
 
         public virtual void Dispose(bool disposing)
