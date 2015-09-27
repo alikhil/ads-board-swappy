@@ -11,5 +11,6 @@ namespace Swappy_V2.Models
         public DbSet<AppUserModel> Users { get; set; }
         public DbSet<ItemModel> Items { get; set; }
         public DbSet<DealModel> Deals { get; set; }
+        public DbSet<ImageModel> Images { get; set; }
     }
 }
