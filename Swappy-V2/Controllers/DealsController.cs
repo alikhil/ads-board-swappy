@@ -116,7 +116,7 @@ namespace Swappy_V2.Controllers
                 }
             }
            
-            return View();
+            return View(deal);
         }
 
         [HttpPost]
@@ -289,7 +289,7 @@ namespace Swappy_V2.Controllers
                     ModelState.AddModelError("file", error);
             }
 
-            return View();
+            return View("Create", deal);
         }
 
         public ActionResult Info(int dealId)
