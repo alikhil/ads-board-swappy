@@ -31,7 +31,7 @@ namespace Swappy_V2.Models
         ApplicationDbContext db = new ApplicationDbContext();
         public List<DealModel> GetList()
         {
-            var list = db.Deals.Include(x => x.Variants).Include(x => x.Images);
+            var list = db.Deals.Where(x=> x.State == DealState.Public).Include(x => x.Variants).Include(x => x.Images);
             return list.ToList();
         }
 
