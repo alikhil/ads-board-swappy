@@ -175,7 +175,7 @@ namespace Swappy_V2.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    DataContext db = new DataContext();
+                    ApplicationDbContext db = new ApplicationDbContext();
                     var appUserModel = new AppUserModel() 
                     {
                         City = model.City, 

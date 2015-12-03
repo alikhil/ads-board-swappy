@@ -28,7 +28,7 @@ namespace Swappy_V2.Models
     {
         private bool disposed = false;
 
-        DataContext db = new DataContext();
+        ApplicationDbContext db = new ApplicationDbContext();
         public List<DealModel> GetList()
         {
             var list = db.Deals.Include(x => x.Variants).Include(x => x.Images);
@@ -103,7 +103,7 @@ namespace Swappy_V2.Models
     {
         private bool disposed = false;
 
-        DataContext db = new DataContext();
+        ApplicationDbContext db = new ApplicationDbContext();
         public List<AppUserModel> GetList()
         {
             var list = db.Users;

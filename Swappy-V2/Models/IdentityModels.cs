@@ -29,6 +29,10 @@ namespace Swappy_V2.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<AppUserModel> Users { get; set; }
+        public DbSet<ItemModel> Items { get; set; }
+        public DbSet<DealModel> Deals { get; set; }
+        public DbSet<ImageModel> Images { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
