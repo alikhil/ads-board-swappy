@@ -69,7 +69,7 @@ namespace Swappy_V2.Controllers
         
         [Authorize]
         [HttpPost]
-        public ActionResult Create(DealModel deal, HttpPostedFileBase file)
+        public ActionResult Create([Bind(Include = "Id,Price,AnotherVariants,ImageUrl,Description,Title,Variants")]DealModel deal, HttpPostedFileBase file)
         {
             bool fValid = file != null;
             JsonObject res = new JsonObject { Status = "OK", Result = new List<string>() };
@@ -208,7 +208,7 @@ namespace Swappy_V2.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult Edit(DealModel deal, HttpPostedFileBase file)
+        public ActionResult Edit([Bind(Include = "Id,Price,AnotherVariants,ImageUrl,Description,Title,Variants")]DealModel deal, HttpPostedFileBase file)
         {
             bool fValid = file != null;
             JsonObject res = new JsonObject { Status = "OK", Result = new List<string>() };
@@ -263,6 +263,7 @@ namespace Swappy_V2.Controllers
                         oldVal.Title = deal.Title;
                         oldVal.Description = deal.Description;
                         oldVal.AnotherVariants = deal.AnotherVariants;
+                        oldVal.Price = deal.Price;
                         foreach (var item in oldVal.Variants)
                         {
                             item.DealModel = oldVal;

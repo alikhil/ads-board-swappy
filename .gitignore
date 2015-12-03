@@ -5,7 +5,7 @@
 *.suo
 *.user
 *.sln.docstates
-
+DontTrack/
 #Publish files
 *[Pp]ublish*
 
