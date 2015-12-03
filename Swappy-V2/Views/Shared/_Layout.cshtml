@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+@using Swappy_V2.Classes;
+<!DOCTYPE html>
 <html>
 <head>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.png" />
@@ -29,6 +31,11 @@
                     <li>@Html.ActionLink("Объявления", "Index", "Deals")</li>
                     <li>@Html.ActionLink("Добавить объявления", "Create", "Deals")</li>
                     <li>@Html.ActionLink("Мои объявления", "MyDeals", "Deals")</li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Админ панель", "Index", "Admin")</li>
+
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
