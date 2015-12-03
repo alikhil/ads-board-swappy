@@ -13,8 +13,8 @@ namespace Swappy_V2.Models
         public int Id { get; set; }
         public int AppUserId { get; set; }
 
-        [Required]
-        [Display(Name = "Название")]
+        [Required(ErrorMessage = "Поле {0} должно быть указано")]
+        [Display(Name = "Заголовок объявления")]
         [MaxLength(50, ErrorMessage = "{0} должно иметь не более {1} символов")]
         public string Title { get; set; }
 
@@ -24,7 +24,7 @@ namespace Swappy_V2.Models
 
         public string ImageUrl { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле {0} должно быть указано")]
         [Display(Name = "Варианты обмена")]
         public ICollection<ItemModel> Variants { get; set; }
 

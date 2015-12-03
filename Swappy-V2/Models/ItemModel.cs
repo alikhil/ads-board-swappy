@@ -9,13 +9,13 @@ namespace Swappy_V2.Models
     public class ItemModel
     {
         public int Id { get; set; }
-        [Required]
-        [Display(Name="Название")]
-        [MaxLength(50, ErrorMessage = "{0} должно иметь не более {1} символов")]
+        [Required(ErrorMessage = "Поле {0} должно быть указано")]
+        [Display(Name="Название предмета")]
+        [MaxLength(50, ErrorMessage = "Поле {0} должно иметь не более {1} символов")]
         public string Title { get; set; }
 
         [Display(Name = "Примечание")]
-        [MaxLength(300, ErrorMessage = "{0} должно иметь не более {1} символов")]
+        [MaxLength(300, ErrorMessage = "Поле {0} должно иметь не более {1} символов")]
         public string Description { get; set; }
 
         public string ImageUrl { get; set; }
