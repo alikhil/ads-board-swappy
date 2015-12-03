@@ -23,6 +23,10 @@ namespace Swappy_V2.Controllers
         IPathProvider ServerPathProvider;
         Mockable MockHelper;
 
+        public ManageController() : this(null, null, null, null)
+        {
+           
+        }
         public ManageController(IRepository<DealModel> dealRepo = null, IRepository<AppUserModel> usersRepo = null, Mockable helper = null, IPathProvider pp = null)
         {
             DealsRepo = dealRepo ?? new DealsRepository();
