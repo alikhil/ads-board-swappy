@@ -195,7 +195,7 @@ namespace Swappy_V2.Controllers
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Подтверждение учетной записи", "Подтвердите вашу учетную запись, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");
-
+                    ViewBag.Email = user.Email;
                     return View("ConfirmEmailBegin");
                 }
                 AddErrors(result);
@@ -203,6 +203,35 @@ namespace Swappy_V2.Controllers
             if (!cityIsValid)
                 ModelState.AddModelError("City", "Указанный город не существует");
             // Появление этого сообщения означает наличие ошибки; повторное отображение формы
+            return View(model);
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult ResendConfirmation(string email)
+        {
+            ResendEmailConfirmationModel model = new ResendEmailConfirmationModel() { Email = email };
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ResendConfirmation(ResendEmailConfirmationModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationDbContext db = new ApplicationDbContext();
+                var user = await UserManager.FindByEmailAsync(model.Email);
+                if (user != null && !user.EmailConfirmed)
+                {
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Подтверждение учетной записи", "Подтвердите вашу учетную запись, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");
+                    ViewBag.Email = user.Email;
+                }
+                return View("ConfirmEmailBegin");
+            }
             return View(model);
         }
 
