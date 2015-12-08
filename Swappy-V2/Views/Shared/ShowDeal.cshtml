@@ -12,14 +12,12 @@
     <dl class="container">
         <row>
             <dt>
-                 <img width="150" id="ItemToChangeImage" class="center img-thumbnail mini-image" height="150" src="@url" /> 
-                @if (!edit) 
-                { 
-                    using (Html.BeginForm("Info", "Deals", FormMethod.Get, htmlAttributes: new { @class = "inline center text-center" }))
-                    {   @Html.Hidden("dealId", Model.Id)
-                        <button class="btn btn-info  btn-lg" style="margin-top:7px; " type="submit">Подробнее</button>
-                    }
-                }
+                <div class="image-div-150">
+                    <div class="image-center-div" style="text-align : initial !important;">
+                        <img  id="ItemToChangeImage"  class="image-item img-thumbnail" src="@url" />
+                    </div>
+                </div>
+               
             </dt>
             <dd>
 
@@ -33,7 +31,7 @@
                 else if (manage)
                 {
                     <div class="inline">
-                        <h4><b>@Html.DisplayFor(model => model.Title)</b></h4>
+                        <h4><b>@Html.ActionLink(Model.Title, "Info", new { dealId = Model.Id })</b></h4>
                     </div>
 
                     <div class="btn-group inline">
@@ -51,7 +49,7 @@
                 }
                 else
                 {
-                    <h4><b>@Html.DisplayFor(model => model.Title)</b></h4>
+                    <h4><b>@Html.ActionLink(Model.Title, "Info", new { dealId = Model.Id })</b></h4>
                     <p>@Html.DisplayFor(model => model.Description)</p>
                 }
 

@@ -16,9 +16,14 @@
                 <h2 class="text-center">@Model.Title</h2>
             </dt>
             <dd></dd>
-            <dt class="img-carcas wide-dt">
-                <img class="full-image center" src="@imagePath" />
+            <dt class="image-div-400 wide-dt" >
+                <div class="image-center-div" style="text-align : initial !important;">
+                    <img id="ItemToChangeImage" class="image-item" src="@imagePath" />
+                </div>
             </dt>
+            @*<dt class="img-carcas wide-dt" style="outline : 1px dashed red;">
+        <img class="full-image center" src="@imagePath" />
+    </dt>*@
             <dd class="float-righter">
                 <br />
                 <p> <b>@Html.DisplayNameFor(model => model.Description)</b></p>
