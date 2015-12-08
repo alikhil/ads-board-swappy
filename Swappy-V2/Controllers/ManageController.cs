@@ -80,19 +80,16 @@ namespace Swappy_V2.Controllers
 
             var userId = MockHelper.GetUserId(User.Identity);
             var appUserId = MockHelper.GetAppUserId(User.Identity);
-            var appUser = UsersRepo.GetList().SingleOrDefault(x => x.Id == appUserId);
+            var appUser = UsersRepo.GetAll().SingleOrDefault(x => x.Id == appUserId);
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
-                //TODO : do something with comments
-                //TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                //Logins = await UserManager.GetLoginsAsync(userId),
-                //BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
                 City = appUser.City,
                 Name = appUser.Name,
                 PhoneNumber = appUser.PhoneNumber,
                 Surname = appUser.Surname
             };
+            await Task.FromResult(0);
             return View(model);
         }
 
@@ -105,8 +102,7 @@ namespace Swappy_V2.Controllers
             if (ModelState.IsValid && cityIsValid)
             {
                 var appUserId = MockHelper.GetAppUserId(User.Identity);
-                var users = UsersRepo.GetList();
-                var appUser = users.SingleOrDefault(x => x.Id == appUserId);
+                var appUser = UsersRepo.GetAll().SingleOrDefault(x => x.Id == appUserId);
                 //Обновление профиля в своей таблице
                 appUser.Name = model.Name;
                 appUser.PhoneNumber = model.PhoneNumber;
@@ -124,20 +120,7 @@ namespace Swappy_V2.Controllers
                 user.PhoneNumber = model.PhoneNumber;
                 user.Name = model.Name;
 
-                var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
-                var Identity = new ClaimsIdentity(User.Identity);
-
-                Identity.RemoveClaim(Identity.FindFirst("Name"));
-                Identity.AddClaim(new Claim("Name", model.Name));
-
-                Identity.RemoveClaim(Identity.FindFirst("City"));
-                Identity.AddClaim(new Claim("City", model.City));
-
-                Identity.RemoveClaim(Identity.FindFirst("Surname"));
-                Identity.AddClaim(new Claim("Surname", model.Surname));
-
-                AuthenticationManager.AuthenticationResponseGrant = new AuthenticationResponseGrant(
-                    new ClaimsPrincipal(Identity), new AuthenticationProperties { IsPersistent = true });
+                UpdateClaims(model);
 
                 await UserManager.UpdateAsync(user);
                 return RedirectToAction("Index");
@@ -145,6 +128,24 @@ namespace Swappy_V2.Controllers
             if (!cityIsValid)
                 ModelState.AddModelError("City", "Указанный город не существует");
             return View("Index", model);
+        }
+
+        private void UpdateClaims(IndexViewModel model)
+        {
+            var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
+            var Identity = new ClaimsIdentity(User.Identity);
+
+            Identity.RemoveClaim(Identity.FindFirst("Name"));
+            Identity.AddClaim(new Claim("Name", model.Name));
+
+            Identity.RemoveClaim(Identity.FindFirst("City"));
+            Identity.AddClaim(new Claim("City", model.City));
+
+            Identity.RemoveClaim(Identity.FindFirst("Surname"));
+            Identity.AddClaim(new Claim("Surname", model.Surname));
+
+            AuthenticationManager.AuthenticationResponseGrant = new AuthenticationResponseGrant(
+                new ClaimsPrincipal(Identity), new AuthenticationProperties { IsPersistent = true });
         }
 
         //

@@ -101,49 +101,6 @@ namespace Swappy_V2.Controllers
         }
 
         //
-        // GET: /Account/VerifyCode
-        [AllowAnonymous]
-        public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
-        {
-            // Требовать предварительный вход пользователя с помощью имени пользователя и пароля или внешнего имени входа
-            if (!await SignInManager.HasBeenVerifiedAsync())
-            {
-                return View("Error");
-            }
-            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
-        }
-
-        //
-        // POST: /Account/VerifyCode
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            // Приведенный ниже код защищает от атак методом подбора, направленных на двухфакторные коды. 
-            // Если пользователь введет неправильные коды за указанное время, его учетная запись 
-            // будет заблокирована на заданный период. 
-            // Параметры блокирования учетных записей можно настроить в IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(model.ReturnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Неправильный код.");
-                    return View(model);
-            }
-        }
-
-        //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -176,25 +133,20 @@ namespace Swappy_V2.Controllers
                 if (result.Succeeded)
                 {
                     ApplicationDbContext db = new ApplicationDbContext();
-                    var appUserModel = new AppUserModel() 
-                    {
-                        City = model.City, 
-                        Email = model.Email, 
-                        Name = model.Name,
-                        PhoneNumber = model.PhoneNumber,
-                        Surname = model.Surname
-                    };
+                    var appUserModel = new AppUserModel()
+                        .WithCity(model.City)
+                        .WithEmail(model.Email)
+                        .WithName(model.Name)
+                        .WithSurname(model.Surname)
+                        .WithPhoneNumber(model.PhoneNumber);
+
 
                     db.Users.Add(appUserModel);
                     await db.SaveChangesAsync();
                     user.AppUserId = appUserModel.Id;
                     await UserManager.UpdateAsync(user);
 
-                    // Дополнительные сведения о том, как включить подтверждение учетной записи и сброс пароля, см. по адресу: http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Отправка сообщения электронной почты с этой ссылкой
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Подтверждение учетной записи", "Подтвердите вашу учетную запись, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");
+                    await SendEmailConfirmation(user);
                     ViewBag.Email = user.Email;
                     return View("ConfirmEmailBegin");
                 }
@@ -225,14 +177,19 @@ namespace Swappy_V2.Controllers
                 var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user != null && !user.EmailConfirmed)
                 {
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Подтверждение учетной записи", "Подтвердите вашу учетную запись, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");
+                    await SendEmailConfirmation(user);
                     ViewBag.Email = user.Email;
                 }
                 return View("ConfirmEmailBegin");
             }
             return View(model);
+        }
+
+        private async Task SendEmailConfirmation(ApplicationUser user)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(user.Id, "Подтверждение учетной записи", "Подтвердите вашу учетную запись, щелкнув <a href=\"" + callbackUrl + "\">здесь</a>");
         }
 
         //
@@ -332,119 +289,6 @@ namespace Swappy_V2.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/ExternalLogin
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
-        {
-            // Запрос перенаправления к внешнему поставщику входа
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
-        }
-
-        //
-        // GET: /Account/SendCode
-        [AllowAnonymous]
-        public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
-        {
-            var userId = await SignInManager.GetVerifiedUserIdAsync();
-            if (userId == null)
-            {
-                return View("Error");
-            }
-            var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
-            var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
-        }
-
-        //
-        // POST: /Account/SendCode
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SendCode(SendCodeViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-
-            // Создание и отправка маркера
-            if (!await SignInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
-            {
-                return View("Error");
-            }
-            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
-        }
-
-        //
-        // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
-        {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-            if (loginInfo == null)
-            {
-                return RedirectToAction("Login");
-            }
-
-            // Выполнение входа пользователя посредством данного внешнего поставщика входа, если у пользователя уже есть имя входа
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
-                default:
-                    // Если у пользователя нет учетной записи, то ему предлагается создать ее
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            }
-        }
-
-        //
-        // POST: /Account/ExternalLoginConfirmation
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Получение сведений о пользователе от внешнего поставщика входа
-                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
-                if (info == null)
-                {
-                    return View("ExternalLoginFailure");
-                }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-                    if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
-                    }
-                }
-                AddErrors(result);
-            }
-
-            ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
 
         //
         // POST: /Account/LogOff
@@ -456,13 +300,7 @@ namespace Swappy_V2.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
-        // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
-        {
-            return View();
-        }
+      
 
         protected override void Dispose(bool disposing)
         {
