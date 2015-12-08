@@ -15,6 +15,7 @@ namespace Swappy_V2.Tests.Generators
 {
     public class FakesGenerator
     {
+        private string ProjectPath = @"M:\GitFiles\Swappy-V2\";
         public Controller GenerateModelErrors<ModelType>(Controller controller, ModelType model)
         {
             var validationContext = new ValidationContext(model, null, null);
@@ -33,7 +34,7 @@ namespace Swappy_V2.Tests.Generators
             pathProviderMoq.Setup(x => x.MapPath(It.IsAny<string>())).Returns(
                 (string path) =>
                 {
-                    return Path.Combine(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2\", path);
+                    return Path.Combine(ProjectPath + @"Swappy-V2\", path);
                 });
             return pathProviderMoq;
         }
@@ -71,7 +72,7 @@ namespace Swappy_V2.Tests.Generators
             fileMoq.Setup(x => x.ContentType).Returns("image/jpg");
             fileMoq.Setup(x => x.ContentLength).Returns(879);
             fileMoq.Setup(x => x.InputStream).Returns(
-                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2.Tests\TestResourses\520.jpg"))));
+                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(ProjectPath + @"Swappy-V2.Tests\TestResourses\520.jpg"))));
             return fileMoq;
         }
 
@@ -82,7 +83,7 @@ namespace Swappy_V2.Tests.Generators
             fileMoq.Setup(x => x.ContentType).Returns("python/py");
             fileMoq.Setup(x => x.ContentLength).Returns(879);
             fileMoq.Setup(x => x.InputStream).Returns(
-                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(@"C:\Users\admin\Documents\Visual Studio 2013\Projects\Swappy-V2\Swappy-V2.Tests\TestResourses\sum.py"))));
+                new MemoryStream(Encoding.Default.GetBytes(File.ReadAllText(ProjectPath + @"Swappy-V2.Tests\TestResourses\sum.py"))));
             return fileMoq;
         }
     }

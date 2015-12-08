@@ -35,8 +35,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
             AdminController adminController = new AdminController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
@@ -46,10 +46,10 @@ namespace Swappy_V2.Tests.Controllers
             var deal = deals[0];
             //Act
             var result = adminController.Deals() as ViewResult;
-            var model = result.Model;
+            var model = (List<DealModel>)result.Model;
             //Assert
-            dealMoq.Verify(x => x.GetList());
-            Assert.AreEqual(deals, model);
+            dealMoq.Verify(x => x.GetAll());
+            CollectionAssert.AreEqual(deals, model);
         }
 
         [TestMethod]
@@ -69,8 +69,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
             AdminController adminController = new AdminController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
@@ -80,10 +80,10 @@ namespace Swappy_V2.Tests.Controllers
             var deal = deals[0];
             //Act
             var result = adminController.Users() as ViewResult;
-            var model = result.Model;
+            var model = (List<AppUserModel>)result.Model;
             //Assert
-            userMoq.Verify(x => x.GetList());
-            Assert.AreEqual(users, model);
+            userMoq.Verify(x => x.GetAll());
+            CollectionAssert.AreEqual(users, model);
         }
 
         [TestMethod]
@@ -103,8 +103,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
             AdminController adminController = new AdminController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
@@ -116,7 +116,7 @@ namespace Swappy_V2.Tests.Controllers
             var model = result.Model;
             List<DealModel> dealsFromResult = result.ViewBag.Deals;
             //Assert
-            userMoq.Verify(x => x.GetList());
+            userMoq.Verify(x => x.GetAll());
             Assert.AreEqual(users[0], model);
             Assert.IsTrue(dealsFromResult.TrueForAll(x => usersDeal.Contains(x)));
             
@@ -139,8 +139,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
             AdminController adminController = new AdminController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
             {
@@ -149,7 +149,7 @@ namespace Swappy_V2.Tests.Controllers
             //Act
             var result = adminController.ShowUser(4) as RedirectToRouteResult;
             //Assert
-            userMoq.Verify(x => x.GetList());
+            userMoq.Verify(x => x.GetAll());
             Assert.AreEqual(result.RouteValues["action"], "Index");
         }
     }

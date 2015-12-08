@@ -35,10 +35,10 @@ namespace Swappy_V2.Tests.Controllers
             List<DealModel> deals = new List<DealModel>();
             List<AppUserModel> users = new List<AppUserModel>();
 
-            var gen = new Generators.DataGenerator();
+            var gen = new DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             int searchingDealId = 0;
@@ -65,14 +65,14 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             //Act
             ViewResult result = dealsController.Index() as ViewResult;
             var searchResult = (List<DealModel>)result.Model;
             //Assert
-            Assert.AreEqual(searchResult, deals);
+            CollectionAssert.AreEqual(searchResult, deals);
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             //Act
@@ -110,7 +110,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
@@ -133,10 +133,10 @@ namespace Swappy_V2.Tests.Controllers
             List<DealModel> deals = new List<DealModel>();
             List<AppUserModel> users = new List<AppUserModel>();
 
-            var gen = new Generators.DataGenerator();
+            var gen = new DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
@@ -164,7 +164,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = deals[0];
 
@@ -191,7 +191,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
@@ -226,7 +226,7 @@ namespace Swappy_V2.Tests.Controllers
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
             // отлавливаем вызов функций получения списков и возвращаем свои тестовые списки
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             
             // мок для подмены путей сервера
             var pathProviderMoq = MoqGenerator.GetServerPathProvider();
@@ -269,7 +269,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             var fileMoq = MoqGenerator.GetValidFile();
             var pathProvider = MoqGenerator.GetServerPathProvider();
@@ -296,7 +296,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             var fileMoq = MoqGenerator.GetNotValidFile();
             var pathProvider = MoqGenerator.GetServerPathProvider();
@@ -375,7 +375,7 @@ namespace Swappy_V2.Tests.Controllers
             gen.Generate(3, dealCntPerUser, 3, out users, out deals, out items);
 
             // отлавливаем вызов функций получения списков и возвращаем свои тестовые списки
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             //подделка-мок для User.Identity
             var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
@@ -393,7 +393,7 @@ namespace Swappy_V2.Tests.Controllers
             ViewResult result = dealsController.MyDeals() as ViewResult;
             var model = result.Model as List<DealModel>;
             //Assert
-            dealMoq.Verify(x => x.GetList());
+            dealMoq.Verify(x => x.GetAll());
             Assert.IsTrue(model.Count == dealCntPerUser);
         }
 
@@ -416,7 +416,7 @@ namespace Swappy_V2.Tests.Controllers
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
             // отлавливаем вызов функций получения списков и возвращаем свои тестовые списки
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             //подделка-мок для User.Identity
             var controllerContext = MoqGenerator.GetControllerWithContextUserIdentity();
@@ -453,7 +453,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
@@ -481,7 +481,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
 
@@ -507,7 +507,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
             var userMoq = MoqGenerator.GetControllerWithContextUserIdentity();
             DealsController dealsController = new DealsController(dealMoq.Object)
             {
@@ -538,7 +538,7 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             DealsController dealsController = new DealsController(dealMoq.Object);
             var deal = new DealModel();
@@ -573,7 +573,7 @@ namespace Swappy_V2.Tests.Controllers
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
             // отлавливаем вызов функций получения списков и возвращаем свои тестовые списки
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
 
             // мок для подмены путей сервера
             var pathProviderMoq = MoqGenerator.GetServerPathProvider();
@@ -614,11 +614,11 @@ namespace Swappy_V2.Tests.Controllers
             List<DealModel> deals = new List<DealModel>();
             List<AppUserModel> users = new List<AppUserModel>();
 
-            var gen = new Generators.DataGenerator();
+            var gen = new DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object);
@@ -650,8 +650,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object){
@@ -682,8 +682,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
@@ -715,8 +715,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
@@ -748,8 +748,8 @@ namespace Swappy_V2.Tests.Controllers
             var gen = new Generators.DataGenerator();
             gen.Generate(3, 2, 3, out users, out deals, out items);
 
-            dealMoq.Setup(x => x.GetList()).Returns(deals);
-            userMoq.Setup(x => x.GetList()).Returns(users);
+            dealMoq.Setup(x => x.GetAll()).Returns(deals);
+            userMoq.Setup(x => x.GetAll()).Returns(users);
 
 
             DealsController dealsController = new DealsController(dealMoq.Object, userMoq.Object, mockingHelper.Object)
