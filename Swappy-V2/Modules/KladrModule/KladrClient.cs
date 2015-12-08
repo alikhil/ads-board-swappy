@@ -198,12 +198,11 @@ namespace Swappy_V2.Modules.KladrModule
         /// <returns>KladrResponse with errors</returns>
         private async Task<KladrResponse> invokeException(Exception e, string message)
         {
-            
             if (e == null)
             {
                 return new KladrResponse();
             }
-            return new KladrResponse(){ Error = e, InfoMessage = message };
+            return await Task.FromResult(new KladrResponse(){ Error = e, InfoMessage = message });
         }
 
         #endregion
