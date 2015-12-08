@@ -49,6 +49,40 @@ namespace Swappy_V2.Models
         {
             return this.Title;
         }
+
+        #region Fluent
+
+        public DealModel WithTitle(string title)
+        {
+            Title = title;
+            return this;
+        }   
+
+        public DealModel WithDescription(string description)
+        {
+            Description = description;
+            return this;
+        }
+
+        public DealModel WithVariants(ICollection<ItemModel> variants)
+        {
+            Variants = variants;
+            return this;
+        }
+
+        public DealModel WithAnotherVariants(bool another)
+        {
+            AnotherVariants = another;
+            return this;
+        }
+
+        public DealModel WithPrice(int price)
+        {
+            Price = price;
+            return this;
+        }
+
+        #endregion
     }
 
     public enum DealState
