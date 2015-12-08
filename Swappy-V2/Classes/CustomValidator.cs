@@ -38,7 +38,7 @@ namespace Swappy_V2.Classes
                     result |= ValidStatus.IncorrectType | ValidStatus.NotValid;
 
                 var ext = Path.GetExtension(file.FileName);
-                if (!AppConstants.AllowedImageExtensions.Contains(ext))
+                if (!AppConstants.AllowedImageExtensions.Contains(ext.ToLower()))
                     result |= ValidStatus.IncorrectFormat| ValidStatus.NotValid;
 
             }
