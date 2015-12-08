@@ -185,9 +185,9 @@
     <Compile Include="Classes\AdminFilter.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\CustomValidator.cs" />
-    <Compile Include="Classes\ExceptionExtensions.cs" />
-    <Compile Include="Classes\IdentityUserExtensions.cs" />
-    <Compile Include="Classes\IEnumerableExtentions.cs" />
+    <Compile Include="Classes\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Classes\Extensions\IdentityUserExtensions.cs" />
+    <Compile Include="Classes\Extensions\IEnumerableExtentions.cs" />
     <Compile Include="Classes\JobScheduler.cs" />
     <Compile Include="Classes\JsonObject.cs" />
     <Compile Include="Classes\Util.cs" />
@@ -236,6 +236,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\noImage.gif" />
     <Content Include="Images\swappy_logo.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
