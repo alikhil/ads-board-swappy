@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Swappy_V2.Classes;
+using Swappy_V2.Classes.Extensions;
+
 namespace Swappy_V2
 {
     public class MvcApplication : System.Web.HttpApplication

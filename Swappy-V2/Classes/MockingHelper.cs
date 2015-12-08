@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Web;
 using Microsoft.AspNet.Identity;
 using Swappy_V2.Models;
+using Swappy_V2.Classes.Extensions;
 
 namespace Swappy_V2.Classes
 {
