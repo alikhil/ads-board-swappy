@@ -8,7 +8,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Web;
 
-namespace Swappy_V2.Classes
+namespace Swappy_V2.Classes.Extensions
 {
     public static class IdentityUserExtensions
     {
