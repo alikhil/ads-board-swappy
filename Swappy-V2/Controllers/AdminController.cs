@@ -39,24 +39,22 @@ namespace Swappy_V2.Controllers
         }
         public ActionResult Deals()
         {
-            var list = DealsRepo.GetList();
+            var list = DealsRepo.GetAll().ToList();
             return View(list);
         }
         public ActionResult Users()
         {
-            var users = UsersRepo.GetList();
+            var users = UsersRepo.GetAll().ToList();
             return View(users);
         }
         public ActionResult ShowUser(int? id)
         {
             if (id.HasValue)
             {
-                var users = UsersRepo.GetList();
                 try
                 {
-                    var user = users.Single(x => x.Id == id.Value);
-                    var deals = DealsRepo.GetList().FindAll(x => x.AppUserId == id);
-                    ViewBag.Deals = deals;
+                    var user = UsersRepo.GetAll().Single(x => x.Id == id.Value);
+                    ViewBag.Deals = DealsRepo.GetAll().Where(x => x.AppUserId == id).ToList(); ;
                     return View(user);
                 }
                 catch (InvalidOperationException)

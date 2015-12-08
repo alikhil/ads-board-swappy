@@ -44,7 +44,7 @@ namespace Swappy_V2.Controllers
         
         public ActionResult Index(string search = null, string city = null)
         {
-            var deals = DealsRepo.GetList();
+            var deals = DealsRepo.GetAll();
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -53,7 +53,7 @@ namespace Swappy_V2.Controllers
                 var nl = from ob in list select ob.Key as DealModel;
                 return View(nl.ToList());
             }
-            return View(deals);
+            return View(deals.ToList());
         }
 
         [HttpGet]
@@ -84,10 +84,8 @@ namespace Swappy_V2.Controllers
             {
                 if (fValid)
                 {
-                    string ufile = Path.GetFileName(file.FileName);
-                    string fname = ufile.Substring(ufile.LastIndexOf('.'));
-                    fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
-                    deal.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file, ServerPathProvider);
+
+                    deal.ImageUrl = UploadImage(deal, file);
                     deal.Images = new List<ImageModel>();
                     deal.Images.Add(
                         new ImageModel() 
@@ -177,9 +175,8 @@ namespace Swappy_V2.Controllers
         public ActionResult MyDeals()
         {
             var ud = MockHelper.GetAppUserId(User.Identity);
-            var list = DealsRepo.GetList();
-            var dls = list.Where(x => x.AppUserId == ud).ToList();
-            return View(dls);
+            var list = DealsRepo.GetAll().Where(x => x.AppUserId == ud).ToList();
+            return View(list);
         }
 
         [HttpGet]
@@ -190,7 +187,7 @@ namespace Swappy_V2.Controllers
             DealModel deal = new DealModel();
             try
             {
-                var list = DealsRepo.GetList();
+                var list = DealsRepo.GetAll();
                 deal = list.Single(x => x.Id == id);
                 // защита от несанкционированного редкатирования другим пользователем
                 if (deal.AppUserId != ud && !(User.IsInRole("Moderator") || User.IsInRole("Admin")))
@@ -224,25 +221,20 @@ namespace Swappy_V2.Controllers
             {
                 try
                 {
-                    var list = DealsRepo.GetList();
-                    //Если объявления не существует - выдаст исключение
-                    var oldVal = list.Single(x => x.Id == deal.Id);
+                    var oldVal = DealsRepo.GetAll().SingleOrDefault(x => x.Id == deal.Id);
                     // Проверка прав доступа
                     if(MockHelper.GetAppUserId(User.Identity) != oldVal.AppUserId && !(User.IsInRole("Admin") || User.IsInRole("Moderator")))
                         throw new Exception("Access denied - 403. Попытка редактировать чужое объявление");
 
                     if (file == null || fValid)
                     {
-                        //TODO delete comments
-                        //deal.ItemToChange.ImageUrl = oldVal.ItemToChange.ImageUrl;
                         if (fValid)
                         {
-                            string ufile = Path.GetFileName(file.FileName);
-                            string fname = ufile.Substring(ufile.LastIndexOf('.'));
-                            fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
-                            oldVal.ImageUrl = Util.SaveFile(AppConstants.DealImagesPath, fname, file, ServerPathProvider);
+                            oldVal.ImageUrl = UploadImage(deal, file);
+                            
                             if (oldVal.Images == null || oldVal.Images.Count == 0)
                             {
+                                oldVal.Images = oldVal.Images ?? new List<ImageModel>();
                                 oldVal.Images.Add(
                                    new ImageModel()
                                    {
@@ -259,15 +251,15 @@ namespace Swappy_V2.Controllers
                             }
                         }
 
-                        oldVal.Variants = deal.Variants;
-                        oldVal.Title = deal.Title;
-                        oldVal.Description = deal.Description;
-                        oldVal.AnotherVariants = deal.AnotherVariants;
-                        oldVal.Price = deal.Price;
+                        oldVal.WithDescription(deal.Description)
+                            .WithTitle(deal.Title)
+                            .WithVariants(deal.Variants)
+                            .WithAnotherVariants(deal.AnotherVariants)
+                            .WithPrice(deal.Price);
+
                         foreach (var item in oldVal.Variants)
-                        {
                             item.DealModel = oldVal;
-                        }
+
                         DealsRepo.Update(oldVal);
                         DealsRepo.Save();
                         return RedirectToAction("MyDeals");
@@ -292,10 +284,17 @@ namespace Swappy_V2.Controllers
             return View("Create", deal);
         }
 
+        private string UploadImage(DealModel deal, HttpPostedFileBase file)
+        {
+            string ufile = Path.GetFileName(file.FileName);
+            string fname = ufile.Substring(ufile.LastIndexOf('.'));
+            fname = String.Format("{0}_{1}_{2}", DateTime.Now.ToString("dd.MM.yyyy - hh-mm-ss"), deal.Id, fname);
+            return Util.SaveFile(AppConstants.DealImagesPath, fname, file, ServerPathProvider);
+        }
+
         public ActionResult Info(int dealId)
         {
-            var list = DealsRepo.GetList();
-            var deal = list.FirstOrDefault(m => m.Id == dealId);
+            var deal = DealsRepo.GetAll().FirstOrDefault(m => m.Id == dealId);
             if (deal == null)
             {
                 // TO DO  сделать перенаправление на страницу с ошибкой
@@ -305,20 +304,21 @@ namespace Swappy_V2.Controllers
         }
 
         [HttpGet]
-        public string GetPhoneNumber(int dealId)
+        public string GetPhoneNumber(int dealId = -1)
         {
             var ob = new JsonObject()
             {
                 Status = "ok"
             };
-            if (dealId == null)
+            if (dealId == -1)
             {
                 ob.Status = "Error";
                 ob.Result = "dealId is null";
                 return JsonConvert.SerializeObject(ob);
             }
-            var list = DealsRepo.GetList();
-            var deal = list.Find(x => x.Id == dealId);
+            var deal = DealsRepo
+                .GetAll()
+                .FirstOrDefault(x => x.Id == dealId);
 
             if (deal == null)
             {
@@ -326,8 +326,9 @@ namespace Swappy_V2.Controllers
                 ob.Result = "deal with id = " + dealId + " not found";
                 return JsonConvert.SerializeObject(ob);
             }
-            var userList = UsersRepo.GetList();
-            var result = userList.Where(x => x.Id == deal.AppUserId).First();
+            var result = UsersRepo
+                .GetAll()
+                .FirstOrDefault(x => x.Id == deal.AppUserId);
             ob.Result = result.PhoneNumber;
             return JsonConvert.SerializeObject(ob);
         }
@@ -339,8 +340,9 @@ namespace Swappy_V2.Controllers
             var deal = new DealModel();
             try
             {
-                var dealList = DealsRepo.GetList();
-                deal = dealList.Single(x => x.Id == id);
+                deal = DealsRepo
+                    .GetAll()
+                    .Single(x => x.Id == id);
                 // защита от несанкционированного удаления другим пользователем кроме админа ;)
                 if (deal.AppUserId != ud && !User.IsInRole("Admin"))
                     throw new Exception("Access denied - 403. Попытка удалить чужое объявление");
@@ -360,7 +362,9 @@ namespace Swappy_V2.Controllers
         {
             try
             {
-                var oldVal = DealsRepo.GetList().Single(x => x.Id == id);
+                var oldVal = DealsRepo
+                    .GetAll()
+                    .Single(x => x.Id == id);
                 
                 if (oldVal.AppUserId != MockHelper.GetAppUserId(User.Identity) && !User.IsInRole("Admin"))
                     throw new Exception("Access denied - 403. Попытка удалить чужое объявление");
