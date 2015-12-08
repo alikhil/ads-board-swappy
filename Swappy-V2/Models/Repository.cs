@@ -12,7 +12,7 @@ namespace Swappy_V2.Models
     /// <typeparam name="Type">Тип данных в таблице</typeparam>
     public interface IRepository<Type>
     {
-        List<Type> GetList();
+        IEnumerable<Type> GetAll();
         Type Get(int id);
         void Create(Type item);
         void AddRange(IEnumerable<Type> forAdd);
@@ -29,10 +29,10 @@ namespace Swappy_V2.Models
         private bool disposed = false;
 
         ApplicationDbContext db = new ApplicationDbContext();
-        public List<DealModel> GetList()
+        public IEnumerable<DealModel> GetAll()
         {
             var list = db.Deals.Where(x=> x.State == DealState.Public).Include(x => x.Variants).Include(x => x.Images);
-            return list.ToList();
+            return list;
         }
 
         public void AddRange(IEnumerable<DealModel> forAdd)
@@ -68,7 +68,7 @@ namespace Swappy_V2.Models
         {
             try
             {
-                return GetList().Single(x => x.Id == id);
+                return GetAll().Single(x => x.Id == id);
             }
             catch(Exception e)
             {
@@ -104,10 +104,10 @@ namespace Swappy_V2.Models
         private bool disposed = false;
 
         ApplicationDbContext db = new ApplicationDbContext();
-        public List<AppUserModel> GetList()
+        public IEnumerable<AppUserModel> GetAll()
         {
             var list = db.Users;
-            return list.ToList();
+            return list;
         }
 
         public void AddRange(IEnumerable<AppUserModel> forAdd)
