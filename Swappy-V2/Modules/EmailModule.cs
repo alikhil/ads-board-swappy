@@ -23,10 +23,8 @@ namespace Swappy_V2.Modules
             myMessage.Text = message.Body + "<p>С уважением, команда Swappy.ru</p>";
             myMessage.Html = message.Body + "<p>С уважением, команда Swappy.ru</p>";
 
-            var credentials = new NetworkCredential(AppConstants.SendgridAccount, AppConstants.SendgridPassword);
-
             // Create a Web transport for sending email.
-            var transportWeb = new Web(credentials);
+            var transportWeb = new Web("***REMOVED***", TimeSpan.FromSeconds(4));
 
             // Send the email.
             if (transportWeb != null)
