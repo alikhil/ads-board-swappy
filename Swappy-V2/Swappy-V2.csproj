@@ -236,6 +236,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\loading.gif" />
     <Content Include="Images\noImage.gif" />
     <Content Include="Images\swappy_logo.png" />
     <Content Include="Scripts\bootstrap.js" />
