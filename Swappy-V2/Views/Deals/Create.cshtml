@@ -6,38 +6,61 @@
     ViewBag.Title = edit ? "Редактировать" : "Создать объявление";
     
 }
-<form enctype="multipart/form-data" id="file-form"></form>
-
-@using (Html.BeginForm())
+<h3>@(edit ? "Редактирование" : "Создание") объявления</h3>
+@using (Html.BeginForm(edit ? "Edit" : "Create", "Deals", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    if (Model != null)
-    {
-
-        <div class="dl-horizontal">
-            @{
-                Html.RenderPartial("ShowDeal", Model, new ViewDataDictionary { { "Edit", true } });
-            }
-        </div>
-    }
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
         @Html.ValidationSummary(false, " ", new { @class = "text-danger", id = "valid-errors" })
-
-
         @Html.HiddenFor(model => model.Id)
-
-        <div class="form-group">
-            <label for="file" class="control-label">Загрузите изображение(@String.Join(",",Swappy_V2.Classes.AppConstants.AllowedImageExtensions))</label>
-            <input type="file" id="file" name="file" />
-        </div>
        
 
-        @Html.HiddenFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title)
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+       
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description)
+            @Html.TextAreaFor(model => model.Description, new { @class = "form-control" } )
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Вещи на которые вы готовы обменяться:</label>
+            @{int cnt = 0;}
+            <div id="eitems">
+                @if (Model.Variants != null)
+                {
+                    foreach (ItemModel item in Model.Variants)
+                    {
+                        if (item != null)
+                        {
+                            string str = cnt++ % 2 == 0 ? "primary" : "success";
+                            Html.RenderPartial("ShowItem", item, new ViewDataDictionary(ViewData) { { "color", str } });
+                        }
 
-        @Html.HiddenFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    }
+                }
+            </div>
+           
+            <strong>
+                @Ajax.ActionLink("Добавить вещь", "AddNewItem", "Deals", new object { }, new AjaxOptions
+                    {
+                        UpdateTargetId = "eitems",
+                        InsertionMode = InsertionMode.InsertAfter,
+                        OnSuccess = "OnCompleteAjax(data)"
+                    }, htmlAttributes: new { @class = "inline btn btn-xs btn-info item-tag" })
+            </strong>
+        </div>
+
+        <div class="form-group checkbox">
+            @Html.Label("AnotherVariants","Рассмотрю другие варианты обмена")
+            @Html.EditorFor(model => model.AnotherVariants)
+            @Html.ValidationMessageFor(model => model.AnotherVariants, "", new { @class = "text-danger" })
+        </div>
+
 
         <div id="tooltip"></div>
 
@@ -70,122 +93,137 @@
                 </div>
             </div>
         </div>
-        @*Modal window for main info*@
-        <div class="modal fade" id="mainInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleInfoModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-middle">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close cancel-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="exampleInfoModalLabel">Вещь, которую вы хотите обменять</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form id="mainModalForm">
-                            <div class="form-group ">
-                                <label for="main-title-text" class="control-label col-md-offset-2">Название</label>
-                                <input type="text" class="form-control col-md-offset-2" id="main-title-text">
-                            </div>
-                            <div class="form-group">
-                                <label for="main-description-text" class="control-label col-md-offset-2">Описание</label>
-                                <textarea class="form-control col-md-offset-2  fixed-area-middle" id="main-description-text"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="main-another-variant-text" class="control-label col-md-offset-2 ">Рассмотрю другие предложения</label>
-                                <input id="main-another-variant-text" class="check-box col-md-offset-2 " type="checkbox" value="true" name="AnotherVariants" data-val-required="Поле 'Рассмотрю другие варианты' должно быть указано" data-val="true" checked="checked" />
-                                <input type="hidden" value="false" name="AnotherVariants" />
-                            </div>
-                        </form>
-                        <div id="main-modal-errors" class="text-danger">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default cancel-btn" data-dismiss="modal">Отмена</button>
-                        <button type="button" class="btn btn-primary main-save-btn">Изменить</button>
-                    </div>
+        <br/>
+       
+        <div class="form-group">
+            @Html.Label("file","Изображение:")
+            <p><span id="image-name"></span></p>
+            <p><span class="text-danger" id="image-validation"></span></p>
+            <div class="image-div-150">
+                <div class="image-center-div">
+                    <img class="image-item" id="upload-image" src="@(Model.ImageUrl ?? "/images/noImage.gif")" />
                 </div>
             </div>
         </div>
-        @*CopyPasteEnd*@
 
-        @Html.HiddenFor(model => model.AnotherVariants)
-        @Html.ValidationMessageFor(model => model.AnotherVariants, "", new { @class = "text-danger" })
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Сохранить" class="btn btn-default" />
+        <div class="form-group ">
+            <div class="btn-primary btn fileUpload">
+                <label for="file" class="control-label">Выбрать изображение</label>
+                <input type="file" id="file" class="upload" name="file" />
             </div>
+            <input type="submit" value="Сохранить" class="btn btn-default" />
+
         </div>
+
     </div>
 }
 @section scripts{
     <script type="text/javascript">
     $(function () {
-        $($('form')[2]).attr("enctype", "multipart/form-data");
-        $("#file").change(function () {
-            var formData = new FormData($('#file-form'));
-            $('progress').show();
-            var fl = this.files[0];
-            formData.append('file', fl);
-            $("#valid-errors > ul").remove();
-            $.ajax({
-                url: '@Url.Action("FileValidCheck")', 
-                type: 'POST',
-                xhr: function () { 
-                    var myXhr = $.ajaxSettings.xhr();
-                    if (myXhr.upload) { 
-                        myXhr.upload.addEventListener('progress', progressHandlingFunction, false); 
-                    }
-                    return myXhr;
-                },
-                success: completeHandler,
-                error: errorHandler,
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false
+         $("#file").change(function () {
+             var file = this.files[0];
+             if (file === undefined)
+                 return;
+            $("#image-name").text(file.name);
+            setImage("/images/loading.gif");
+            $("#image-validation").text("");
+            isFileValid(file, function (isValid) {
+                if (isValid)
+                    displayPreview(file);
+                else {
+                    console.log("Not valid");
+                    setImage("");
+                    $("#image-validation").text("Изображение должно быть в формате jpeg,gif или png. И должно весить не более 4МБ.")
+                }
             });
+
         });
     });
-    function progressHandlingFunction(e) {
-        if (e.lengthComputable) {
+
+        function isFileValid(file, callback){
+            if (isExtensionsValid(file.name))
+                isFileTypeValid(file, callback);
+            else
+                callback(false);
         }
-    }
-    function completeHandler(data) {
-        var obj = $.parseJSON(data);
-        if (obj.Status == "OK")
-        {
-            $('img').attr('src', obj.Result);
+
+        function getExtension(filename) {
+            var parts = filename.split('.');
+            return parts[parts.length - 1];
         }
-        else {
-            var list = obj.Result;
-            console.log(list);
-            for (var s = 0; s < list.length;s++)
-            {
-                console.log(s);
-                $('#valid-errors').append('<ul>*' + list[s] + '<ul/>');
+
+        function isFileTypeValid(file, callback) {
+            console.log(file.type);
+            var fileReader = new FileReader();
+            fileReader.onloadend = function (e) {
+                var arr = (new Uint8Array(e.target.result)).subarray(0, 4);
+                var header = "";
+                for (var i = 0; i < arr.length; i++) {
+                    header += arr[i].toString(16);
+                }
+                console.log(header);
+                switch (header) {
+                    case "89504e47":    //png
+                    case "47494638":    //gif
+                    case "ffd8ffe0":    //jpg
+                    case "ffd8ffe1":
+                    case "ffd8ffe2":
+                        callback(true);
+                        break;
+                    default:
+                        callback(false);
+                        break;
+                }
+
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        function isExtensionsValid(filename){
+            var ext = getExtension(filename);
+            switch (ext.toLowerCase()) {
+                case 'jpg':
+                case 'gif':
+                case 'bmp':
+                case 'png':
+                    return true;
+                default:
+                    return false;
             }
+            return false;
         }
 
-    }
-    function errorHandler(er) {
-        alert('Произошла ошибка!');
-    }
-    function deleteContainer(evt) {
-        evt = evt || window.event;
-        var target = evt.target || evt.srcElement;
-        target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
-    }
-    function OnCompleteAjax(data) {
-        $editBtn = $(data).find('.edit-button');
-        initBtns();
+        function onFileLoad(e) {
+            setImage(e.target.result);
+        }
 
-        $btnId = $editBtn.attr('btn-id');
-        $id = $btnId.split('-')[1];
-        $trueEditBtn = $(".edit-button[btn-id*='" + $btnId + "']");
-        $trueEditBtn.attr('mode', 'create');
-        $trueEditBtn.click();
-        $trueEditBtn.parent().hide();
-        deleteInps($id);
-        //deleteInps($id);
-    }
+        function displayPreview(file) {
+            var reader = new FileReader();
+            reader.onload = onFileLoad;
+            reader.readAsDataURL(file);
+        }
+
+        function setImage(url) {
+           $("#upload-image").attr("src", url);
+        }
+    
+        function deleteContainer(evt) {
+            evt = evt || window.event;
+            var target = evt.target || evt.srcElement;
+            target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
+        }
+        function OnCompleteAjax(data) {
+            $editBtn = $(data).find('.edit-button');
+            initBtns();
+
+            $btnId = $editBtn.attr('btn-id');
+            $id = $btnId.split('-')[1];
+            $trueEditBtn = $(".edit-button[btn-id*='" + $btnId + "']");
+            $trueEditBtn.attr('mode', 'create');
+            $trueEditBtn.click();
+            $trueEditBtn.parent().hide();
+            deleteInps($id);
+            //deleteInps($id);
+        }
     </script>
 }

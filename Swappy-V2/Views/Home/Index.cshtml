@@ -3,8 +3,19 @@
 }
 
 <div class="jumbotron">
-    <h1>Swappy™</h1>
-    <p class="lead">Уникальная площадка для бесплатного обмена вещами на территории всей России.</p>
-    <p>Меняем вещи. Меняем мир!</p>
-    <p><a href="@Url.Action("Index","Deals")" class="btn btn-primary btn-lg">Найти и обменять &raquo;</a></p>
+    <div class="row">
+        <div class="col-xs-3">
+            <img src="~/Images/swappy_logo.png" height="250" />
+        </div>
+        <div class="col-xs-9">
+            <h2><span style="font-size:50px">Swappy™</span> - меняем вещи. Меняем мир!</h2>
+            <div class="row">
+                <div class="col-xs-10">
+                    <p class="lead">Уникальная площадка для бесплатного обмена вещами на территории всей России.</p>
+                </div>
+            </div>
+            <p><a href="@Url.Action("Index","Deals")" class="btn btn-primary btn-lg">Найти и обменять »</a></p>
+
+        </div>
+    </div>
 </div>

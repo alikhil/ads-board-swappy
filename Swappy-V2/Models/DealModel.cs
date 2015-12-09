@@ -29,7 +29,7 @@ namespace Swappy_V2.Models
         public ICollection<ItemModel> Variants { get; set; }
 
         [Required]
-        [Display(Name="Рассматрю другие варианты")]
+        [Display(Name="Рассмотрю другие варианты")]
         public bool AnotherVariants { get; set; }
 
         [Display(Name="Город")]
