@@ -3,6 +3,7 @@
 
 @{
     var edit = ViewData["EditDeal"] != null && (bool)ViewData["EditDeal"] == true;
+    ViewData["Edit"] = edit;
     ViewBag.Title = edit ? "Редактировать" : "Создать объявление";
     
 }
