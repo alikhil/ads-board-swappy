@@ -17,6 +17,7 @@ using Swappy_V2.Modules;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using Swappy_V2.Modules.DealMatchingModule;
 
 namespace Swappy_V2.Controllers
 {
@@ -101,7 +102,7 @@ namespace Swappy_V2.Controllers
                     i.DealModel = deal;
                 DealsRepo.Create(deal);
                 DealsRepo.Save();
-
+                DealMatchingModule.Instance.FindMatch(deal);
                 return RedirectToAction("Index");
             }
             else
@@ -262,6 +263,7 @@ namespace Swappy_V2.Controllers
 
                         DealsRepo.Update(oldVal);
                         DealsRepo.Save();
+                        DealMatchingModule.Instance.FindMatch(oldVal);
                         return RedirectToAction("MyDeals");
                     }
 
