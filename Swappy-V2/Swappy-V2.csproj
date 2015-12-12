@@ -55,6 +55,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.4.0.1\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -183,11 +187,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Classes\AdminFilter.cs" />
+    <Compile Include="Modules\DealMatchingModule\DealMatchingModule.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\CustomValidator.cs" />
     <Compile Include="Classes\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Classes\Extensions\IdentityUserExtensions.cs" />
     <Compile Include="Classes\Extensions\IEnumerableExtentions.cs" />
+    <Compile Include="Modules\DealMatchingModule\IDealMatcher.cs" />
     <Compile Include="Classes\JobScheduler.cs" />
     <Compile Include="Classes\JsonObject.cs" />
     <Compile Include="Classes\Util.cs" />
@@ -216,6 +222,9 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Repository.cs" />
     <Compile Include="Models\ResendEmailConfirmationModel.cs" />
+    <Compile Include="Modules\DealMatchingModule\IMatchProvider.cs" />
+    <Compile Include="Modules\DealMatchingModule\SimpleDealMatcher.cs" />
+    <Compile Include="Modules\DealMatchingModule\SimpleMatchProvider.cs" />
     <Compile Include="Modules\EmailModule.cs" />
     <Compile Include="Modules\KladrModule\KladrClient.cs" />
     <Compile Include="Modules\KladrModule\KladrResponse.cs" />
