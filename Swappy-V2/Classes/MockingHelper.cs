@@ -11,7 +11,7 @@ using Swappy_V2.Classes.Extensions;
 namespace Swappy_V2.Classes
 {
     /// <summary>
-    /// Класс для помощи подделования статик и прочих функций
+    /// Helper class for mocking 
     /// </summary>
     public class MockingHelper : Mockable
     {
@@ -37,7 +37,7 @@ namespace Swappy_V2.Classes
     }
 
     /// <summary>
-    /// Класс для помощи подделования статик и прочих функций, которые трудно отмокать
+    /// Interface of Helper class for mocking static functions
     /// </summary>
     public interface Mockable
     {
@@ -48,7 +48,7 @@ namespace Swappy_V2.Classes
     }
     
     /// <summary>
-    /// Интерфейс для получения пути в дирикторию сайта.
+    /// Interface for getting server path
     /// Вынесен в отдельный интерфейс для удобства тестирования
     /// </summary>
     public interface IPathProvider

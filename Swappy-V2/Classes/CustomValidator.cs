@@ -9,7 +9,7 @@ using System.IO;
 namespace Swappy_V2.Classes
 {
     /// <summary>
-    /// Класс для проверки валидности 
+    /// Class for validating check
     /// </summary>
     public static class CustomValidator
     {

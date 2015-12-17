@@ -8,22 +8,21 @@ using Swappy_V2.Classes.Extensions;
 namespace Swappy_V2.Modules
 {
     /// <summary>
-    /// Модуль поиска объявлений
+    /// Deals search module
     /// </summary>
     public static class SearchModule
     {
         /// <summary>
-        /// Минимальная допустимый коэфицент совпадения заголовка объявления
-        /// со строкой поиска
+        /// Minimal accepted rate of match deal title with search query
         /// </summary>
         public static double Fuzzyness = 0.7;
 
         /// <summary>
-        /// Поиск объявлений
+        /// Deals search
         /// </summary>
-        /// <param name="request">Строка поиска</param>
-        /// <param name="ar">Список объектов типа Searchable в котором надо искать</param>
-        /// <returns>Результаты поиска</returns>
+        /// <param name="request">Search query</param>
+        /// <param name="ar">List of object type of Searchable where need to search</param>
+        /// <returns>Search results</returns>
         public static SearchRequest FindOut(string request, IEnumerable<Searchable> ar)
         {
             SearchRequest req = new SearchRequest { Request = request };

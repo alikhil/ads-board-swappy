@@ -194,7 +194,6 @@
     <Compile Include="Classes\Extensions\IdentityUserExtensions.cs" />
     <Compile Include="Classes\Extensions\IEnumerableExtentions.cs" />
     <Compile Include="Modules\DealMatchingModule\IDealMatcher.cs" />
-    <Compile Include="Classes\JobScheduler.cs" />
     <Compile Include="Classes\JsonObject.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ValidationUIHelper.cs" />

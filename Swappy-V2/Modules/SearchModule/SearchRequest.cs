@@ -5,19 +5,13 @@ using System.Web;
 
 namespace Swappy_V2.Modules
 {
-    /// <summary>
-    /// Результат поиска
-    /// </summary>
     public class SearchRequest
     {
         /// <summary>
-        /// Поисковый запрос
+        /// Search query
         /// </summary>
         public string Request { get; set; }
 
-        /// <summary>
-        /// Список пар объектов с полным совпадением по запроу
-        /// </summary>
         public List<KeyValuePair<Searchable, double>> FullMatch { get; set; }
 
         /// <summary>

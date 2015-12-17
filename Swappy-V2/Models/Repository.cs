@@ -7,9 +7,9 @@ using System.Data.Entity;
 namespace Swappy_V2.Models
 {
     /// <summary>
-    /// Интерфейс обертки для работы с БД
+    /// Interface of db wrapper
     /// </summary>
-    /// <typeparam name="Type">Тип данных в таблице</typeparam>
+    /// <typeparam name="Type">Type of data on tables</typeparam>
     public interface IRepository<Type>
     {
         IEnumerable<Type> GetAll();
@@ -22,7 +22,7 @@ namespace Swappy_V2.Models
     }
 
     /// <summary>
-    /// Обертка для работы с таблицей объявлений
+    /// Deals table wrapper
     /// </summary>
     public class DealsRepository : IRepository<DealModel>
     {
@@ -97,7 +97,7 @@ namespace Swappy_V2.Models
     }
 
     /// <summary>
-    /// Обертка для работы с таблицей юзеров
+    /// Wrapper for user table
     /// </summary>
     public class UsersRepository : IRepository<AppUserModel>
     {

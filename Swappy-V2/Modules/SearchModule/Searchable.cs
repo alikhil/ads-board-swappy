@@ -6,7 +6,7 @@ using System.Web;
 namespace Swappy_V2.Modules
 {
     /// <summary>
-    /// Интерфейс для объектов поиска
+    /// Interface for searching elements
     /// </summary>
     public interface Searchable
     {

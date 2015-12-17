@@ -78,7 +78,7 @@ namespace Swappy_V2.Modules.DealMatchingModule
             var message = new IdentityMessage();
             message.Destination = user.Email;
             message.Subject = "Интересные объявления";
-            var url = "http://localhost:50219/Deals/Info?dealId=";
+            var url = HttpContext.Current.Request.Url.AbsoluteUri + "Deals/Info?dealId=";
             message.Body = String.Join("\n",
                         deals.Select(d => String.Format("<p><a href='{0}{1}'>{2}</a></p>", url, d.Id, d.Title)));
             EmailModule.SendAsync("noreply@swappy.ru", message);

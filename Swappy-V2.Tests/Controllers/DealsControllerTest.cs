@@ -51,7 +51,7 @@ namespace Swappy_V2.Tests.Controllers
         }
 
         /// <summary>
-        /// Проверка на то, чтобы все объявления показывались
+        /// Check if all deals shown
         /// </summary>
         [TestMethod]
         public void DealsIndexShowingDeals()
